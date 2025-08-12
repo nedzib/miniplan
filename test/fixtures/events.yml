@@ -1,0 +1,39 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: events
+#
+#  id          :bigint           not null, primary key
+#  description :text
+#  end_time    :datetime
+#  location    :string
+#  start_time  :datetime
+#  title       :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  user_id     :bigint           not null
+#
+# Indexes
+#
+#  index_events_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
+one:
+  title: MyString
+  description: MyText
+  start_time: 2025-08-12 17:36:36
+  end_time: 2025-08-12 17:36:36
+  location: MyString
+  user: one
+
+two:
+  title: MyString
+  description: MyText
+  start_time: 2025-08-12 17:36:36
+  end_time: 2025-08-12 17:36:36
+  location: MyString
+  user: two

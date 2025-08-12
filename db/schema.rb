@@ -10,9 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_222550) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_224751) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "events", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "location"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "family_groups", force: :cascade do |t|
+    t.string "name"
+    t.bigint "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_family_groups_on_event_id"
+  end
+
+  create_table "invitations", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.string "name", null: false
+    t.string "email"
+    t.string "phone"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "family_group_id"
+    t.index ["event_id"], name: "index_invitations_on_event_id"
+    t.index ["family_group_id"], name: "index_invitations_on_family_group_id"
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -31,5 +64,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_222550) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "events", "users"
+  add_foreign_key "family_groups", "events"
+  add_foreign_key "invitations", "events"
+  add_foreign_key "invitations", "family_groups"
   add_foreign_key "sessions", "users"
 end
