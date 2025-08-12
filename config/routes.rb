@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "landing/index"
+  get "rsvp/confirm"
+  get "events/index"
+  get "events/show"
   resource :session
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -13,4 +17,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  #
+  root "landing#index"
 end
