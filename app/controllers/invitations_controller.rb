@@ -15,12 +15,12 @@ class InvitationsController < ApplicationController
   end
 
   def edit
-    @event = Event.find(params[:event_id])
-    @invitation = Invitation.find(params[:invitation_id])
+    @invitation = Invitation.find_by!(hash_id: params[:id])
+    @event = @invitation.event
   end
 
   def update
-    @invitation = Invitation.find(params[:id])
+    @invitation = Invitation.find_by!(hash_id: params[:id])
     @event = @invitation.event
 
     if @invitation.update(invitation_params)
@@ -31,7 +31,7 @@ class InvitationsController < ApplicationController
   end
 
   def destroy
-    @invitation = Invitation.find(params[:invitation_id])
+    @invitation = Invitation.find_by!(hash_id: params[:id])
     @event = @invitation.event
     @invitation.destroy
     redirect_to invitations_index_path(event_id: @event.id), notice: "Invitation was successfully deleted."
