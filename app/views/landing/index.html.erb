@@ -1,4 +1,19 @@
-<div>
-  <h1 class="font-bold text-4xl">Landing#index</h1>
-  <p>Find me in app/views/landing/index.html.erb</p>
+<div class="min-h-screen bg-white m-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center space-y-8">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-900">
+        MiniPlan
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Your personal event planning assistant
+      </p>
+
+      <div class="mt-8">
+        <%= link_to new_session_path, class: "inline-flex items-center px-6 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-150 ease-in-out shadow-md" do %>
+          <span>Get Started</span>
+          <i class="nf nf-cod-sign_in ml-3"></i>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>

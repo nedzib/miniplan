@@ -1,4 +1,30 @@
-<div>
-  <h1 class="font-bold text-4xl">Events#index</h1>
-  <p>Find me in app/views/events/index.html.erb</p>
+<div class="container mt-18">
+  <h1 class="font-bold text-4xl">Events</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <% @user.events.each do |event| %>
+      <%= link_to invitations_index_path(event_id: event.id), class: "bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200" do %>
+        <h2 class="text-xl font-semibold mb-2"><%= event.title %></h2>
+        <p class="text-gray-600 mb-4"><%= event.description %></p>
+        <div class="flex items-center mb-2">
+          <i class="nf nf-fa-calendar text-gray-500 mr-2 text-lg"></i>
+          <span class="text-gray-700"><%= event.start_time.strftime("%B %d, %Y at %I:%M %p") %></span>
+        </div>
+        <div class="flex items-center mb-2">
+          <i class="nf nf-fa-location_dot text-gray-500 mr-2 text-lg"></i>
+          <span class="text-gray-700"><%= event.location %></span>
+        </div>
+        <div class="flex items-center mb-2">
+          <i class="nf nf-fa-users text-gray-500 mr-2 text-lg"></i>
+          <span class="text-gray-700"><%= event.invitations.count %>
+            participants</span>
+        </div>
+        <div class="flex items-center">
+          <i class="nf nf-fa-check text-gray-500 mr-2 text-lg"></i>
+          <span class="text-gray-700"><%= event.invitations.accepted.count %>
+            confirmed</span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>

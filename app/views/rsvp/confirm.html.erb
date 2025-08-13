@@ -1,4 +1,168 @@
-<div>
-  <h1 class="font-bold text-4xl">Rsvp#confirm</h1>
-  <p>Find me in app/views/rsvp/confirm.html.erb</p>
+<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-invitation-id-value="<%= @invitation.id %>">
+  <!-- Floating bees for ambiance -->
+  <div class="floating-bee">🐝</div>
+  <div class="floating-bee">🐝</div>
+  <div class="floating-bee">🐝</div>
+  
+  <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Header con animación -->
+    <div class="text-center mb-6 sm:mb-8 animate-fade-in">
+      <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg mb-4 border-3 sm:border-4 border-yellow-300">
+        <div class="bee-icon text-3xl sm:text-4xl">🐝</div>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 px-2" style="color: var(--bee-black); text-shadow: 2px 2px 4px rgba(255,193,7,0.3);">
+        ¡Te invitamos al Panal! 🍯
+      </h1>
+      <p class="text-base sm:text-lg px-4" style="color: var(--bee-brown);">Una dulce invitación te espera en nuestro jardín</p>
+    </div>
+
+    <!-- Indicador de Estado RSVP -->
+    <div class="mb-6 mx-2 sm:mx-0" data-rsvp-target="statusIndicator">
+      <% case @invitation.status %>
+      <% when 'accepted' %>
+        <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-accepted">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl animate-bounce">🐝</span>
+            <div class="text-center">
+              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-black);">¡Ya confirmaste tu vuelo al panal!</p>
+              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Tu asistencia está confirmada 🍯</p>
+            </div>
+            <span class="text-xl">✅</span>
+          </div>
+        </div>
+      <% when 'declined' %>
+        <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-declined">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🍯</span>
+            <div class="text-center">
+              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-brown);">Has declinado la invitación</p>
+              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Esperamos verte en la próxima floración</p>
+            </div>
+            <span class="text-xl">💔</span>
+          </div>
+        </div>
+      <% else %>
+        <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-pending">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl bee-icon">🌻</span>
+            <div class="text-center">
+              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-black);">Esperando tu confirmación</p>
+              <p class="text-xs sm:text-sm" style="color: var(--bee-black);">¿Volarás hasta nuestro panal? 🐝</p>
+            </div>
+            <span class="text-xl">⏳</span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Tarjeta principal de invitación -->
+    <div class="bee-card">
+      <!-- Header de la tarjeta -->
+      <div class="bee-card-header text-center">
+        <div class="inline-block p-2 sm:p-3 bg-white bg-opacity-20 rounded-full mb-3 sm:mb-4 border-2 border-black">
+          <div class="bee-icon text-xl sm:text-2xl">🌻</div>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 px-2"><%= @event.title %></h2>
+        <p class="text-base sm:text-lg px-2">
+          Querida abejita <span class="font-semibold"><%= @invitation.name %></span> 🐝
+        </p>
+      </div>
+
+      <!-- Contenido de la tarjeta -->
+      <div class="p-4 sm:p-6 lg:p-8">
+        <!-- Descripción del evento -->
+        <% if @event.description.present? %>
+          <div class="mb-6 sm:mb-8 text-center">
+            <p class="text-base sm:text-lg leading-relaxed px-2" style="color: var(--bee-brown);"><%= @event.description %></p>
+            <div class="text-xl sm:text-2xl mt-2">🌼 🌻 🌺</div>
+          </div>
+        <% end %>
+
+        <!-- Detalles del evento -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <!-- Fecha y Hora -->
+          <div class="bee-detail-card">
+            <div class="bee-icon-wrapper flex-shrink-0">
+              <div class="bee-icon text-lg sm:text-xl">⏰</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Fecha y Hora de Floración</h3>
+              <p class="text-sm sm:text-base break-words" style="color: var(--bee-brown);">
+                <%= format_date_spanish(@event.start_time) if @event.start_time %>
+              </p>
+              <p class="text-sm sm:text-base" style="color: var(--bee-brown);">
+                <%= format_time_spanish(@event.start_time) if @event.start_time %>
+                <% if @event.end_time %>
+                  - <%= format_time_spanish(@event.end_time) %>
+                <% end %>
+              </p>
+            </div>
+          </div>
+
+          <!-- Ubicación -->
+          <% if @event.location.present? %>
+            <div class="bee-detail-card">
+              <div class="bee-icon-wrapper flex-shrink-0">
+                <div class="bee-icon text-lg sm:text-xl">🌍</div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Ubicación del Panal</h3>
+                <p class="text-sm sm:text-base break-words" style="color: var(--bee-brown);"><%= @event.location %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Mensaje personalizado -->
+        <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, var(--bee-light-yellow) 0%, #FFFACD 100%); border-color: var(--bee-yellow);">
+          <div class="text-2xl sm:text-3xl mb-2">🐝 👑 🐝</div>
+          <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: var(--bee-black);">
+            Tu presencia es tan valiosa como la miel más pura
+          </h3>
+          <p class="text-sm sm:text-base px-2" style="color: var(--bee-brown);">
+            Esperamos que vueles hasta nosotros para compartir este momento especial, querida <%= @invitation.name %>. 
+            Por favor confirma tu asistencia para que podamos preparar el panal perfectamente. 🍯
+          </p>
+          <div class="text-xl sm:text-2xl mt-3">🌻 🐝 🌺 🐝 🌻</div>
+        </div>
+
+        <!-- Botones de confirmación -->
+        <div data-rsvp-target="confirmationSection">
+          <div class="flex flex-col gap-3 sm:gap-4 max-w-md mx-auto">
+            <button 
+              data-action="click->rsvp#accept"
+              data-rsvp-target="acceptButton"
+              class="bee-button bee-button-accept">
+              <span class="bee-icon text-lg">🐝</span>
+              <span class="flex-1">¡Sí, volaré al panal!</span>
+            </button>
+            
+            <button 
+              data-action="click->rsvp#decline"
+              data-rsvp-target="declineButton"
+              class="bee-button bee-button-decline">
+              <span class="text-lg">💔</span>
+              <span class="flex-1">No podré volar esta vez</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección de respuesta (oculta inicialmente) -->
+        <div data-rsvp-target="responseSection" class="hidden">
+          <!-- El contenido se llenará dinámicamente con los partials -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center px-4 pb-4" style="color: var(--bee-brown);">
+      <p class="text-xs sm:text-sm">
+        Si tienes alguna pregunta, no dudes en zumbar hasta nosotros. 🐝
+      </p>
+      <p class="text-xs mt-2">
+        Miniplan • Creando momentos dulces como la miel 🍯
+      </p>
+      <div class="text-base sm:text-lg mt-2">🌼 🐝 🌻 🐝 🌼</div>
+    </div>
+  </div>
 </div>

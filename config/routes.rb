@@ -1,9 +1,16 @@
 Rails.application.routes.draw do
+  get "invitations/index"
+  get "invitations/edit"
+  get "invitations/delete"
   get "landing/index"
   get "rsvp/confirm"
+  get "rsvp/partial/:name", to: "rsvp#partial"
   get "events/index"
   get "events/show"
   resource :session
+  resources :invitations do
+    patch :rsvp, to: "rsvp#update"
+  end
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

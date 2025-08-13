@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="w-full">
   <head>
     <title><%= content_for(:title) || "Miniplan" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -19,11 +19,14 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "https://www.nerdfonts.com/assets/css/webfont.css",
+    rel: "stylesheet",
+    media: "all" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <main class="w-full flex flex-col items-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 h-full">
       <%= yield %>
     </main>
   </body>
