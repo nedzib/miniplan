@@ -1,4 +1,5 @@
 class RsvpController < ApplicationController
+  allow_unauthenticated_access
   def confirm
     @invitation = Invitation.find_by!(hash_id: params[:hash_id])
     @event = @invitation.event
