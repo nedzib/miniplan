@@ -11,17 +11,23 @@ export default class extends Controller {
 
   async accept(event) {
     event.preventDefault()
-    await this.updateRSVP('accepted')
-    await this.showConfirmation('accepted')
-    this.updateStatusIndicator('accepted')
-    this.launchConfetti()
+    const response = await this.updateRSVP('accepted')
+    if (response && response.success) {
+      this.updateFamilyMembersStatus('accepted')
+      await this.showConfirmation('accepted')
+      this.updateStatusIndicator('accepted')
+      this.launchConfetti()
+    }
   }
 
   async decline(event) {
     event.preventDefault()
-    await this.updateRSVP('declined')
-    await this.showConfirmation('declined')
-    this.updateStatusIndicator('declined')
+    const response = await this.updateRSVP('declined')
+    if (response && response.success) {
+      this.updateFamilyMembersStatus('declined')
+      await this.showConfirmation('declined')
+      this.updateStatusIndicator('declined')
+    }
   }
 
   async updateRSVP(status) {
@@ -55,9 +61,13 @@ export default class extends Controller {
       if (!response.ok) {
         throw new Error('Error updating RSVP')
       }
+
+      const result = await response.json()
+      return result
     } catch (error) {
       console.error('Error:', error)
       alert('Hubo un error al procesar tu respuesta. Por favor intenta de nuevo.')
+      return null
     }
   }
 
@@ -155,6 +165,49 @@ export default class extends Controller {
         </div>
       `
     }
+  }
+
+  updateFamilyMembersStatus(status) {
+    if (!this.hasFamilyMemberCheckboxTarget) return
+
+    // Actualizar el estado visual de los miembros familiares que fueron marcados
+    this.familyMemberCheckboxTargets.forEach(checkbox => {
+      if (checkbox.checked) {
+        const memberRow = checkbox.closest('div[class*="flex items-center justify-between"]')
+        if (memberRow) {
+          const statusIcon = memberRow.querySelector('div.mr-3 span')
+          const statusTextElement = memberRow.querySelector('span.font-medium')
+          
+          if (statusIcon && statusTextElement) {
+            if (status === 'accepted') {
+              statusIcon.textContent = '✅'
+              statusTextElement.textContent = 'Confirmado'
+            } else if (status === 'declined') {
+              statusIcon.textContent = '❌'
+              statusTextElement.textContent = 'Declinado'
+            }
+          }
+          
+          // Desmarcar el checkbox y deshabilitarlo temporalmente
+          checkbox.checked = false
+          checkbox.disabled = true
+          
+          // Agregar feedback visual
+          const label = checkbox.nextElementSibling
+          if (label) {
+            const originalText = label.textContent
+            label.textContent = status === 'accepted' ? '✓ Confirmado' : '✗ Actualizado'
+            label.style.color = status === 'accepted' ? 'green' : 'red'
+            
+            setTimeout(() => {
+              checkbox.disabled = false
+              label.textContent = originalText
+              label.style.color = ''
+            }, 3000)
+          }
+        }
+      }
+    })
   }
 
   // Fallback templates in case partial loading fails
