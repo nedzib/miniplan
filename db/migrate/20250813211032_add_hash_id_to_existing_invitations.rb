@@ -1,7 +1,7 @@
 class AddHashIdToExistingInvitations < ActiveRecord::Migration[8.0]
   def up
     # Generar hash_id para invitaciones que no lo tengan
-    Invitation.where(hash_id: [nil, ""]).find_each do |invitation|
+    Invitation.where(hash_id: [ nil, "" ]).find_each do |invitation|
       loop do
         hash_id = SecureRandom.hex(16)
         unless Invitation.exists?(hash_id: hash_id)

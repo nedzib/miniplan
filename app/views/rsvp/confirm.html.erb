@@ -149,7 +149,17 @@
                       </p>
                     </div>
                   </div>
-                  <div class="flex items-center">
+                  <div class="flex items-center gap-2">
+                    <% if member.hash_id.present? %>
+                      <button 
+                        type="button"
+                        onclick="copyInvitationLink('<%= rsvp_confirm_url(hash_id: member.hash_id) %>', '<%= member.name %>')"
+                        class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors duration-200 flex items-center gap-1"
+                        title="Copiar link de invitación de <%= member.name %>">
+                        <span class="text-xs">🔗</span>
+                        <span class="hidden sm:inline text-xs">Copiar Link</span>
+                      </button>
+                    <% end %>
                     <label class="flex items-center cursor-pointer">
                       <input 
                         type="checkbox" 
@@ -226,3 +236,81 @@
     </div>
   </div>
 </div>
+
+<!-- Script para copiar links -->
+<script>
+function copyInvitationLink(url, memberName) {
+  navigator.clipboard.writeText(url).then(function() {
+    showNotification(`Link de ${memberName} copiado al portapapeles 🐝`, 'success');
+  }).catch(function(err) {
+    // Fallback para navegadores que no soportan clipboard API
+    fallbackCopyToClipboard(url);
+    showNotification(`Link de ${memberName} copiado 🐝`, 'success');
+  });
+}
+
+function fallbackCopyToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+}
+
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  
+  // Usar estilos inline para asegurar que se vean correctamente
+  if (type === 'success') {
+    notification.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: #10b981;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 20rem;
+      font-size: 0.875rem;
+      border: 2px solid #059669;
+    `;
+  } else {
+    notification.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: #ef4444;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 20rem;
+      font-size: 0.875rem;
+      border: 2px solid #dc2626;
+    `;
+  }
+  
+  const icon = type === 'success' ? '✅' : '❌';
+  notification.innerHTML = `
+    <span style="font-size: 1.125rem;">${icon}</span>
+    <span>${message}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Remover notificación después de 4 segundos
+  setTimeout(() => {
+    notification.remove();
+  }, 4000);
+}
+</script>
