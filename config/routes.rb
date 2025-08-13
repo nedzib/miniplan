@@ -3,17 +3,20 @@ Rails.application.routes.draw do
     resources :presupuestos do
       resources :lineas, except: [ :show ]
     end
+    resources :family_groups, only: [ :index, :create, :destroy ]
+    resources :invitations, except: [ :show ]
   end
-  get "invitations/index"
-  delete "invitations/delete", to: "invitations#destroy", as: :invitations_delete
-  post "invitations", to: "invitations#create"
-  get "invitations_edit", to: "invitations#edit", as: :invitations_edit
   get "landing/index"
   get "rsvp/confirm/:hash_id", to: "rsvp#confirm", as: :rsvp_confirm
   get "rsvp/partial/:name", to: "rsvp#partial"
   resource :session
-  resources :invitations do
-    patch :rsvp, to: "rsvp#update"
+  get "invitations_edit", to: "invitations#edit", as: :invitations_edit
+  resources :invitations, only: [] do
+    member do
+      get :edit, param: :hash_id
+      delete :destroy, param: :hash_id
+      patch :update, param: :hash_id
+    end
   end
   patch "invitations/:hash_id/rsvp", to: "rsvp#update", as: :invitation_rsvp_update
   resources :passwords, param: :token

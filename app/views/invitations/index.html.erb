@@ -18,13 +18,19 @@
     </div>
   <% end %>
 
-  <div class="mb-4">
+  <div class="mb-4 flex justify-between items-center">
     <p class="text-gray-600">
       Total Invitations:
       <%= @event.invitations.count %>
       | Accepted Invitations:
       <%= @event.invitations.where(status: "accepted").count %>
     </p>
+    
+    <%= link_to event_family_groups_path(@event), 
+        class: "bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 inline-flex items-center" do %>
+      <i class="nf nf-fa-users mr-2"></i>
+      Grupos Familiares
+    <% end %>
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -34,6 +40,7 @@
           <th scope="col" class="px-6 py-3">Name</th>
           <th scope="col" class="px-6 py-3">Email</th>
           <th scope="col" class="px-6 py-3">Phone</th>
+          <th scope="col" class="px-6 py-3">Grupo Familiar</th>
           <th scope="col" class="px-6 py-3">Status</th>
           <th scope="col" class="px-6 py-3">Actions</th>
         </tr>
@@ -44,6 +51,16 @@
             <td class="px-6 "><%= invitation.name %></td>
             <td class="px-6 "><%= invitation.email %></td>
             <td class="px-6 "><%= invitation.phone %></td>
+            <td class="px-6 ">
+              <% if invitation.family_group %>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <i class="nf nf-fa-users mr-1"></i>
+                  <%= invitation.family_group.name %>
+                </span>
+              <% else %>
+                <span class="text-gray-400 text-xs italic">Sin grupo</span>
+              <% end %>
+            </td>
             <td class="px-6 ">
               <% if invitation.status == "accepted" %>
                 <span class="flex items-center">
@@ -83,8 +100,7 @@
           </tr>
         <% end %>
         <tr class="bg-gray-50 mb-6">
-          <%= form_with(model: Invitation.new, url: invitations_path, local: true, class: "w-full") do |f| %>
-            <%= f.hidden_field :event_id, value: @event.id %>
+          <%= form_with(model: [@event, Invitation.new], local: true, class: "w-full") do |f| %>
             <td class="px-6 py-3">
               <%= f.text_field :name,
                            class:
@@ -102,6 +118,12 @@
                                 class:
                                   "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
                                 placeholder: "Phone" %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.select :family_group_id,
+                          options_from_collection_for_select(@event.family_groups, :id, :name),
+                          { prompt: "Sin grupo" },
+                          { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
             </td>
             <td class="px-6 py-3">
               <%= f.text_field :status,

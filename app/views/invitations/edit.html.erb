@@ -1,6 +1,6 @@
 <div class="container mt-18">
   <h1 class="font-bold text-4xl flex flex-row items-center">
-    <%= link_to invitations_index_path(event_id: @event.id), class: "flex items-center text-blue-600 hover:text-blue-800" do %>
+    <%= link_to event_invitations_path(@event), class: "flex items-center text-blue-600 hover:text-blue-800" do %>
       <i class="nf nf-fa-arrow_left mr-2 text-xl self-center"></i>
     <% end %>
     Edit Invitation for <%= @event.title %>
@@ -41,7 +41,7 @@
       <div class="flex space-x-3">
         <%= f.submit "Update Invitation",
                  class: "flex-1 rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-        <%= link_to "Cancel", invitations_index_path(event_id: @event.id),
+        <%= link_to "Cancel", event_invitations_path(@event),
                 class: "flex-1 text-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
       </div>
     <% end %>

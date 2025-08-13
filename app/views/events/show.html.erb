@@ -218,7 +218,7 @@
           <!-- Quick Actions -->
           <div class="mt-6 pt-6 border-t border-gray-200">
             <div class="space-y-3">
-              <%= link_to invitations_index_path(event_id: @event.id), 
+              <%= link_to event_invitations_path(@event), 
                   class: "w-full px-4 py-2 text-center bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center" do %>
                 <i class="nf nf-fa-envelope mr-2"></i>
                 View All Invitations

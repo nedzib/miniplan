@@ -51,7 +51,7 @@
           <% end %>
           
           <!-- View Invitations Button -->
-          <%= link_to invitations_index_path(event_id: event.id), 
+          <%= link_to event_invitations_path(event), 
               class: "mt-4 inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200" do %>
             <i class="nf nf-fa-envelope mr-2"></i>
             View Invitations

@@ -1,16 +1,18 @@
 class InvitationsController < ApplicationController
+  before_action :set_event
+
   def index
-    @event = Event.find(params[:event_id])
+    @family_groups = @event.family_groups
   end
 
   def create
-    @event = Event.find(params[:invitation][:event_id])
     @invitation = @event.invitations.build(invitation_params)
 
     if @invitation.save
-      redirect_to invitations_index_path(event_id: @event.id), notice: "Invitation was successfully created."
+      redirect_to event_invitations_path(@event), notice: "Invitation was successfully created."
     else
-      redirect_to invitations_index_path(event_id: @event.id), alert: @invitation.errors.full_messages.join(", ")
+      @family_groups = @event.family_groups
+      redirect_to event_invitations_path(@event), alert: @invitation.errors.full_messages.join(", ")
     end
   end
 
@@ -24,7 +26,12 @@ class InvitationsController < ApplicationController
     @event = @invitation.event
 
     if @invitation.update(invitation_params)
-      redirect_to invitations_index_path(event_id: @event.id), notice: "Invitation was successfully updated."
+      # Si viene de family_groups, redirigir allí
+      if request.referer&.include?("family_groups")
+        redirect_to event_family_groups_path(@event), notice: "Invitación actualizada exitosamente."
+      else
+        redirect_to event_invitations_path(@event), notice: "Invitation was successfully updated."
+      end
     else
       render :edit
     end
@@ -34,12 +41,16 @@ class InvitationsController < ApplicationController
     @invitation = Invitation.find_by!(hash_id: params[:id])
     @event = @invitation.event
     @invitation.destroy
-    redirect_to invitations_index_path(event_id: @event.id), notice: "Invitation was successfully deleted."
+    redirect_to event_invitations_path(@event), notice: "Invitation was successfully deleted."
   end
 
   private
 
+  def set_event
+    @event = Event.find(params[:event_id]) if params[:event_id]
+  end
+
   def invitation_params
-    params.require(:invitation).permit(:name, :email, :phone, :status, :event_id)
+    params.require(:invitation).permit(:name, :email, :phone, :status, :event_id, :family_group_id)
   end
 end
