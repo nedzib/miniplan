@@ -83,6 +83,7 @@ production:
     <<: *default
     database: miniplan_production
     username: miniplan
+    url: <%= ENV["DATABASE_URL"] %>
     password: <%= ENV["MINIPLAN_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
