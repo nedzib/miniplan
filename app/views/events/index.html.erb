@@ -1,10 +1,18 @@
 <div class="container mt-18">
   <div class="flex justify-between items-center mb-6">
     <h1 class="font-bold text-4xl">Events</h1>
-    <%= link_to new_event_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center" do %>
-      <i class="nf nf-fa-plus mr-2"></i>
-      New Event
-    <% end %>
+    <div class="flex items-center space-x-3">
+      <%= button_to session_path, method: :delete, 
+          class: "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center text-sm",
+          form: { class: "inline" } do %>
+        <i class="nf nf-fa-sign_out mr-2"></i>
+        Logout
+      <% end %>
+      <%= link_to new_event_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center" do %>
+        <i class="nf nf-fa-plus mr-2"></i>
+        New Event
+      <% end %>
+    </div>
   </div>
 
   <% if @events.any? %>

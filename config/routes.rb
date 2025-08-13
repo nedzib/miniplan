@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get "rsvp/confirm/:hash_id", to: "rsvp#confirm", as: :rsvp_confirm
   get "rsvp/partial/:name", to: "rsvp#partial"
   resource :session
+  resource :registration, only: [ :new, :create ]
   get "invitations_edit", to: "invitations#edit", as: :invitations_edit
   resources :invitations, only: [] do
     member do

@@ -1,12 +1,12 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full space-y-8">
     <!-- Header -->
     <div class="text-center">
       <h2 class="text-3xl font-bold text-gray-900 mb-2">
-        Update Password
+        Create Account
       </h2>
       <p class="text-sm text-gray-600">
-        Enter your new password below
+        Sign up to start planning your events
       </p>
     </div>
 
@@ -25,45 +25,75 @@
       <% end %>
     </div>
 
-    <!-- Formulario de actualización -->
+    <!-- Formulario de registro -->
     <div class="bg-white py-8 px-6 shadow rounded-lg border">
-      <%= form_with url: password_path(params[:token]), method: :put, class: "space-y-6" do |form| %>
+      <%= form_with model: @user, url: registration_path, local: true, class: "space-y-6" do |form| %>
+        <!-- Mostrar errores de validación -->
+        <% if @user.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-center mb-2">
+              <span class="text-lg mr-2">❌</span>
+              <h3 class="text-sm font-medium text-red-800">
+                Please fix the following errors:
+              </h3>
+            </div>
+            <ul class="text-sm text-red-700 list-disc list-inside space-y-1">
+              <% @user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
         
-        <!-- Campo de nueva contraseña -->
+        <!-- Campo de email -->
         <div>
-          <%= form.label :password, "New Password", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.label :email_address, "Email Address", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.email_field :email_address, 
+              required: true, 
+              autofocus: true, 
+              autocomplete: "email", 
+              placeholder: "Enter your email", 
+              class: "appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+        </div>
+
+        <!-- Campo de contraseña -->
+        <div>
+          <%= form.label :password, "Password", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= form.password_field :password, 
               required: true, 
               autocomplete: "new-password", 
-              placeholder: "Enter new password", 
+              placeholder: "Choose a strong password", 
               minlength: 8,
               maxlength: 72, 
               class: "appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
           <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters long</p>
         </div>
 
-        <!-- Campo de confirmación -->
+        <!-- Campo de confirmación de contraseña -->
         <div>
           <%= form.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-gray-700 mb-1" %>
           <%= form.password_field :password_confirmation, 
               required: true, 
               autocomplete: "new-password", 
-              placeholder: "Repeat new password", 
+              placeholder: "Confirm your password", 
               maxlength: 72, 
               class: "appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
         </div>
 
-        <!-- Botón de guardar -->
+        <!-- Botón de registro -->
         <div>
-          <%= form.submit "Update Password", 
+          <%= form.submit "Create Account", 
               class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
         </div>
       <% end %>
 
-      <!-- Link de navegación -->
+      <!-- Link para iniciar sesión -->
       <div class="text-center pt-4 border-t border-gray-200">
-        <%= link_to "Back to Sign In", new_session_path, 
-            class: "text-sm text-blue-600 hover:text-blue-500" %>
+        <p class="text-sm text-gray-600">
+          Already have an account? 
+          <%= link_to "Sign in here", new_session_path, 
+              class: "font-medium text-blue-600 hover:text-blue-500" %>
+        </p>
       </div>
     </div>
   </div>
