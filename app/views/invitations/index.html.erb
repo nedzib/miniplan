@@ -1,10 +1,22 @@
 <div class="container mt-18">
   <h1 class="font-bold text-4xl flex flex-row items-center">
-    <%= link_to events_index_path, class: "flex items-center text-blue-600 hover:text-blue-800" do %>
+    <%= link_to events_path, class: "flex items-center text-blue-600 hover:text-blue-800" do %>
       <i class="nf nf-fa-arrow_left mr-2 text-xl self-center"></i>
     <% end %>
     <%= @event.title %>
   </h1>
+
+  <% if notice %>
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      <%= alert %>
+    </div>
+  <% end %>
 
   <div class="mb-4">
     <p class="text-gray-600">
@@ -53,7 +65,6 @@
             <td class="px-6 flex space-x-2">
               <%= link_to invitations_edit_path(event_id: @event.id, invitation_id: invitation.id), class: "font-medium text-blue-600 hover:underline flex items-center" do %>
                 <i class="nf nf-fa-edit mr-1"></i>
-                Edit
               <% end %>
               <%= button_to invitations_delete_path(event_id: @event.id, invitation_id: invitation.id),
               method: :delete,
@@ -64,17 +75,15 @@
                 },
               } do %>
                 <i class="nf nf-fa-trash mr-1"></i>
-                Delete
               <% end %>
-              <%= link_to rsvp_confirm_path(invitation_id: invitation.id), class: "font-medium text-green-600 hover:underline flex items-center" do %>
+              <%= link_to rsvp_confirm_path(invitation_id: invitation.id), target: "_blank", class: "font-medium text-green-600 hover:underline flex items-center" do %>
                 <i class="nf nf-fa-link mr-1"></i>
-                RSVP Link
               <% end %>
             </td>
           </tr>
         <% end %>
         <tr class="bg-gray-50 mb-6">
-          <%= form_with(model: Invitation.new, local: true, class: "w-full") do |f| %>
+          <%= form_with(model: Invitation.new, url: invitations_path, local: true, class: "w-full") do |f| %>
             <%= f.hidden_field :event_id, value: @event.id %>
             <td class="px-6 py-3">
               <%= f.text_field :name,

@@ -27,6 +27,33 @@
 
   <body>
     <main class="w-full flex flex-col items-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 h-full">
+      <!-- Flash Messages -->
+      <% if flash.any? %>
+        <div class="fixed top-4 right-4 z-50 space-y-2" data-controller="flash-messages">
+          <% flash.each do |type, message| %>
+            <div class="flash-message bg-white border-l-4 <%= type == 'notice' ? 'border-green-500' : type == 'alert' ? 'border-red-500' : 'border-blue-500' %> rounded-lg shadow-lg p-4 max-w-sm opacity-100 transition-all duration-300 transform translate-x-0"
+                 data-flash-messages-target="message"
+                 data-flash-type="<%= type %>">
+              <div class="flex items-center">
+                <% if type == 'notice' %>
+                  <i class="nf nf-fa-check_circle text-green-500 mr-3 text-lg"></i>
+                <% elsif type == 'alert' %>
+                  <i class="nf nf-fa-exclamation_triangle text-red-500 mr-3 text-lg"></i>
+                <% else %>
+                  <i class="nf nf-fa-info_circle text-blue-500 mr-3 text-lg"></i>
+                <% end %>
+                <span class="text-gray-800 font-medium flex-1"><%= message %></span>
+                <button class="ml-3 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        data-action="click->flash-messages#dismiss"
+                        data-flash-messages-target="closeButton">
+                  <i class="nf nf-fa-times"></i>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      
       <%= yield %>
     </main>
   </body>

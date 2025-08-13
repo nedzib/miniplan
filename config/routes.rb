@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
+  resources :events
   get "invitations/index"
-  get "invitations/edit"
-  get "invitations/delete"
+  delete "invitations/delete", to: "invitations#destroy", as: :invitations_delete
+  post "invitations", to: "invitations#create"
+  get "invitations_edit", to: "invitations#edit", as: :invitations_edit
   get "landing/index"
   get "rsvp/confirm"
   get "rsvp/partial/:name", to: "rsvp#partial"
-  get "events/index"
-  get "events/show"
   resource :session
   resources :invitations do
     patch :rsvp, to: "rsvp#update"
