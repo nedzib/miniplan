@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import confetti from "canvas-confetti"
 
 export default class extends Controller {
-  static targets = ["acceptButton", "declineButton", "confirmationSection", "responseSection", "statusIndicator"]
+  static targets = ["acceptButton", "declineButton", "confirmationSection", "responseSection", "statusIndicator", "familyMembersSection", "familyMemberCheckbox"]
   static values = { hashId: String }
 
   connect() {
@@ -26,13 +26,30 @@ export default class extends Controller {
 
   async updateRSVP(status) {
     try {
+      // Recopilar datos de miembros del grupo familiar
+      const familyMemberData = {}
+      if (this.hasFamilyMemberCheckboxTarget) {
+        this.familyMemberCheckboxTargets.forEach(checkbox => {
+          if (checkbox.checked) {
+            const memberId = checkbox.name.match(/\[(\d+)\]/)[1]
+            familyMemberData[memberId] = "1"
+          }
+        })
+      }
+
+      const requestBody = { 
+        status: status, 
+        hash_id: this.hashIdValue,
+        family_members: familyMemberData
+      }
+
       const response = await fetch(`/invitations/${this.hashIdValue}/rsvp`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ status: status, hash_id: this.hashIdValue })
+        body: JSON.stringify(requestBody)
       })
 
       if (!response.ok) {
@@ -142,6 +159,15 @@ export default class extends Controller {
 
   // Fallback templates in case partial loading fails
   getAcceptedTemplate() {
+    // Contar miembros familiares confirmados
+    const confirmedFamilyMembers = this.hasFamilyMemberCheckboxTarget ? 
+      this.familyMemberCheckboxTargets.filter(checkbox => checkbox.checked).length : 0
+    
+    const familyMessage = confirmedFamilyMembers > 0 ? 
+      `<p class="text-sm mb-2" style="color: var(--bee-brown);">
+         También confirmaste a ${confirmedFamilyMembers} miembro(s) de tu grupo familiar 👨‍👩‍👧‍👦
+       </p>` : ""
+
     return `
       <div class="bee-response-section">
         <div class="animate-bounce mb-4 sm:mb-6">
@@ -151,6 +177,7 @@ export default class extends Controller {
         <p class="text-base sm:text-lg mb-4 sm:mb-6 px-4" style="color: var(--bee-brown);">
           ¡Excelente! Como una abeja a la miel, esperamos verte en nuestro panal especial.
         </p>
+        ${familyMessage}
         <div class="bee-alert bee-alert-success mx-2 sm:mx-0">
           <p class="text-sm sm:text-base">Te enviaremos más detalles dulces como la miel por correo electrónico pronto. 🌻</p>
         </div>

@@ -2,6 +2,13 @@ class RsvpController < ApplicationController
   def confirm
     @invitation = Invitation.find_by!(hash_id: params[:hash_id])
     @event = @invitation.event
+
+    # Cargar miembros del grupo familiar si existe
+    if @invitation.family_group
+      @family_members = @invitation.family_group.invitations.where.not(id: @invitation.id)
+    else
+      @family_members = []
+    end
   end
 
   def update
@@ -12,7 +19,19 @@ class RsvpController < ApplicationController
                     Invitation.find(params[:invitation_id])
     end
 
+    # Actualizar la invitación principal
     if @invitation.update(status: params[:status])
+
+      # Si se envían confirmaciones para miembros del grupo familiar
+      if params[:family_members].present?
+        params[:family_members].each do |member_id, member_status|
+          if member_status == "1" # checkbox marcado
+            family_invitation = Invitation.find(member_id)
+            family_invitation.update(status: params[:status]) if family_invitation.family_group == @invitation.family_group
+          end
+        end
+      end
+
       render json: { success: true, status: @invitation.status }
     else
       render json: { success: false, errors: @invitation.errors }, status: :unprocessable_entity
