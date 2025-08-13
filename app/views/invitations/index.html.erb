@@ -76,7 +76,7 @@
               } do %>
                 <i class="nf nf-fa-trash mr-1"></i>
               <% end %>
-              <%= link_to rsvp_confirm_path(invitation_id: invitation.id), target: "_blank", class: "font-medium text-green-600 hover:underline flex items-center" do %>
+              <%= link_to rsvp_confirm_path(hash_id: invitation.hash_id), target: "_blank", class: "font-medium text-green-600 hover:underline flex items-center" do %>
                 <i class="nf nf-fa-link mr-1"></i>
               <% end %>
             </td>

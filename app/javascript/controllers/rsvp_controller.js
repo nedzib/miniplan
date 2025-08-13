@@ -3,7 +3,7 @@ import confetti from "canvas-confetti"
 
 export default class extends Controller {
   static targets = ["acceptButton", "declineButton", "confirmationSection", "responseSection", "statusIndicator"]
-  static values = { invitationId: Number }
+  static values = { hashId: String }
 
   connect() {
     console.log("RSVP controller connected")
@@ -26,13 +26,13 @@ export default class extends Controller {
 
   async updateRSVP(status) {
     try {
-      const response = await fetch(`/invitations/${this.invitationIdValue}/rsvp`, {
+      const response = await fetch(`/invitations/${this.hashIdValue}/rsvp`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify({ status: status })
+        body: JSON.stringify({ status: status, hash_id: this.hashIdValue })
       })
 
       if (!response.ok) {

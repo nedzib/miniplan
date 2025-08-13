@@ -5,12 +5,13 @@ Rails.application.routes.draw do
   post "invitations", to: "invitations#create"
   get "invitations_edit", to: "invitations#edit", as: :invitations_edit
   get "landing/index"
-  get "rsvp/confirm"
+  get "rsvp/confirm/:hash_id", to: "rsvp#confirm", as: :rsvp_confirm
   get "rsvp/partial/:name", to: "rsvp#partial"
   resource :session
   resources :invitations do
     patch :rsvp, to: "rsvp#update"
   end
+  patch "invitations/:hash_id/rsvp", to: "rsvp#update", as: :invitation_rsvp_update
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

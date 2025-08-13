@@ -1,11 +1,16 @@
 class RsvpController < ApplicationController
   def confirm
-    @invitation = Invitation.find(params[:invitation_id])
+    @invitation = Invitation.find_by!(hash_id: params[:hash_id])
     @event = @invitation.event
   end
 
   def update
-    @invitation = Invitation.find(params[:invitation_id])
+    # Try to find by hash_id first (new secure method), fallback to invitation_id (old method)
+    @invitation = if params[:hash_id]
+                    Invitation.find_by!(hash_id: params[:hash_id])
+    else
+                    Invitation.find(params[:invitation_id])
+    end
 
     if @invitation.update(status: params[:status])
       render json: { success: true, status: @invitation.status }
