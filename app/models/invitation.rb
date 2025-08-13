@@ -34,7 +34,7 @@ class Invitation < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validates :hash_id, presence: true, uniqueness: true
 
-  before_create :generate_hash_id
+  before_validation :generate_hash_id, if: -> { hash_id.blank? }
 
   def to_param
     hash_id

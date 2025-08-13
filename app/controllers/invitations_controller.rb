@@ -12,7 +12,8 @@ class InvitationsController < ApplicationController
       redirect_to event_invitations_path(@event), notice: "Invitation was successfully created."
     else
       @family_groups = @event.family_groups
-      redirect_to event_invitations_path(@event), alert: @invitation.errors.full_messages.join(", ")
+      flash.now[:alert] = @invitation.errors.full_messages.join(", ")
+      render :index, status: :unprocessable_entity
     end
   end
 
