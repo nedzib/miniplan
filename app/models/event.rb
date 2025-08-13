@@ -24,6 +24,7 @@ class Event < ApplicationRecord
   belongs_to :user
   has_many :invitations, dependent: :destroy
   has_many :family_groups, dependent: :destroy
+  has_many :presupuestos, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 1000 }

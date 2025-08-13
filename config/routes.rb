@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  resources :events
+  resources :events do
+    resources :presupuestos do
+      resources :lineas, except: [ :show ]
+    end
+  end
   get "invitations/index"
   delete "invitations/delete", to: "invitations#destroy", as: :invitations_delete
   post "invitations", to: "invitations#create"

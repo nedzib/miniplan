@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_13_162320) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_13_164054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,6 +49,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_162320) do
     t.index ["hash_id"], name: "index_invitations_on_hash_id", unique: true
   end
 
+  create_table "lineas", force: :cascade do |t|
+    t.bigint "presupuesto_id", null: false
+    t.string "concepto", null: false
+    t.integer "valor_cents", null: false
+    t.string "valor_currency", default: "USD"
+    t.boolean "por_persona", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["presupuesto_id"], name: "index_lineas_on_presupuesto_id"
+  end
+
+  create_table "presupuestos", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_presupuestos_on_event_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "ip_address"
@@ -70,5 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_162320) do
   add_foreign_key "family_groups", "events"
   add_foreign_key "invitations", "events"
   add_foreign_key "invitations", "family_groups"
+  add_foreign_key "lineas", "presupuestos"
+  add_foreign_key "presupuestos", "events"
   add_foreign_key "sessions", "users"
 end

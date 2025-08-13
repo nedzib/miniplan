@@ -1,0 +1,48 @@
+<div class="container mt-18">
+  <h1 class="font-bold text-4xl flex flex-row items-center mb-6">
+    <%= link_to event_presupuesto_path(@event, @presupuesto), class: "flex items-center text-blue-600 hover:text-blue-800" do %>
+      <i class="nf nf-fa-arrow_left mr-2 text-xl self-center"></i>
+    <% end %>
+    Editar Línea
+  </h1>
+
+  <div class="max-w-md mx-auto">
+    <%= form_with(model: [@event, @presupuesto, @linea], local: true, class: "space-y-6") do |f| %>
+      <% if @linea.errors.any? %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <ul class="list-disc list-inside">
+            <% @linea.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :concepto, "Concepto", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :concepto,
+                     class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <%= f.label :valor, "Valor (USD)", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :valor,
+                       step: 0.01,
+                       min: 0,
+                       class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div class="flex items-center">
+        <%= f.check_box :por_persona, class: "rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <%= f.label :por_persona, "Este costo es por persona", class: "ml-2 block text-sm text-gray-700" %>
+      </div>
+
+      <div class="flex space-x-3">
+        <%= f.submit "Actualizar Línea",
+                 class: "flex-1 rounded-md border border-transparent bg-yellow-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2" %>
+        <%= link_to "Cancelar", event_presupuesto_path(@event, @presupuesto),
+                class: "flex-1 text-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2" %>
+      </div>
+    <% end %>
+  </div>
+</div>
