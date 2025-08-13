@@ -1,3 +1,10 @@
+<% content_for :title, "#{@event.title} - Invitación para #{@invitation.name}" %>
+<% content_for :description, "#{@invitation.name}, estás invitado(a) a #{@event.title}. #{@event.description.present? ? @event.description : 'Te esperamos en este evento especial.'}" %>
+<% content_for :og_title, "🐝 #{@event.title} - Invitación Especial" %>
+<% content_for :og_description, "#{@invitation.name}, tienes una invitación especial para #{@event.title}. #{@event.start_time ? "📅 #{format_date_spanish(@event.start_time)}" : ""} #{@event.location.present? ? "📍 #{@event.location}" : ""}" %>
+<% content_for :og_image_alt, "Invitación para #{@event.title} - #{@invitation.name}" %>
+<% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
+
 <div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>">
   <!-- Floating bees for ambiance -->
   <div class="floating-bee">🐝</div>

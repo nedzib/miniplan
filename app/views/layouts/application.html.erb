@@ -8,6 +8,29 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <!-- Basic Meta Tags -->
+    <meta name="description" content="<%= content_for(:description) || 'Miniplan - Crea y gestiona invitaciones para tus eventos especiales de manera fácil y organizada.' %>">
+    
+    <!-- Open Graph Meta Tags para Facebook, WhatsApp, etc. -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for(:og_title) || content_for(:title) || 'Miniplan - Gestión de Eventos e Invitaciones' %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || content_for(:description) || 'Crea y gestiona invitaciones para tus eventos especiales de manera fácil y organizada.' %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || asset_url('miniplan-preview.svg') %>">
+    <meta property="og:url" content="<%= content_for(:og_url) || request.original_url %>">
+    <meta property="og:site_name" content="Miniplan">
+    <meta property="og:locale" content="es_ES">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:og_title) || content_for(:title) || 'Miniplan - Gestión de Eventos e Invitaciones' %>">
+    <meta name="twitter:description" content="<%= content_for(:og_description) || content_for(:description) || 'Crea y gestiona invitaciones para tus eventos especiales.' %>">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || asset_url('miniplan-preview.svg') %>">
+    
+    <!-- WhatsApp specific (uses Open Graph) -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<%= content_for(:og_image_alt) || 'Miniplan - Tu invitación especial te espera' %>">
+
     <%= yield :head %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
