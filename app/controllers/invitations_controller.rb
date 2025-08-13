@@ -9,7 +9,8 @@ class InvitationsController < ApplicationController
     @invitation = @event.invitations.build(invitation_params)
 
     if @invitation.save
-      redirect_to event_invitations_path(@event), notice: "Invitation was successfully created."
+      # Redirección con parámetros limpios para evitar problemas con el formulario
+      redirect_to event_invitations_path(@event, success: "created"), notice: "Invitation was successfully created."
     else
       @family_groups = @event.family_groups
       flash.now[:alert] = @invitation.errors.full_messages.join(", ")
