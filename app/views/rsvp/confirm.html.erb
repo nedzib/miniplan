@@ -32,13 +32,13 @@
       <div class="text-center mb-3 animate-fade-in">
         <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background-color: #f97316; border: 1px solid #ea580c;">
           <div class="flex items-center justify-center space-x-2">
-            <div class="text-center">
+            <div class="text-center flex flex-row">
               <% if @invitation.status == 'accepted' && has_pending_family_members %>
                 <p class="text-xs font-medium">Confirma a tus familiares hasta:</p>
               <% else %>
                 <p class="text-xs font-medium">Confirmaciones hasta:</p>
               <% end %>
-              <p class="text-xs font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
+              <p class="text-xs mx-2 font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
               <div id="countdown-timer" class="text-sm font-bold" data-deadline="<%= @event.rsvp_deadline.to_i * 1000 %>">
                 <!-- El countdown se actualizará con JavaScript -->
               </div>
