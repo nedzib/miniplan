@@ -5,20 +5,37 @@
 <% content_for :og_image_alt, "Invitación para #{@event.title} - #{@invitation.name}" %>
 <% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
 
-<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if @event.rsvp_deadline && !rsvp_deadline_passed?(@event) && @invitation.status != 'accepted' %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
+<%
+  # Verificar si hay familiares pendientes
+  has_pending_family_members = @invitation.family_group && 
+                               @family_members.any? { |member| member.status == 'pending' }
+  
+  # Mostrar countdown si:
+  # 1. Hay deadline y no ha pasado, Y
+  # 2. (La invitación no está aceptada O hay familiares pendientes)
+  show_countdown = @event.rsvp_deadline && 
+                   !rsvp_deadline_passed?(@event) && 
+                   (@invitation.status != 'accepted' || has_pending_family_members)
+%>
+
+<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if show_countdown %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
   <!-- Floating bees for ambiance -->
   <div class="floating-bee">🐝</div>
   <div class="floating-bee">🐝</div>
   <div class="floating-bee">🐝</div>
   
   <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <!-- Countdown Section (si hay deadline, no ha pasado, y no está confirmado) -->
-    <% if @event.rsvp_deadline && !rsvp_deadline_passed?(@event) && @invitation.status != 'accepted' %>
+    <!-- Countdown Section -->
+    <% if show_countdown %>
       <div class="text-center mb-3 animate-fade-in">
         <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background-color: #f97316; border: 1px solid #ea580c;">
           <div class="flex items-center justify-center space-x-2">
             <div class="text-center">
-              <p class="text-xs font-medium">Confirmaciones hasta:</p>
+              <% if @invitation.status == 'accepted' && has_pending_family_members %>
+                <p class="text-xs font-medium">Confirma a tus familiares hasta:</p>
+              <% else %>
+                <p class="text-xs font-medium">Confirmaciones hasta:</p>
+              <% end %>
               <p class="text-xs font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
               <div id="countdown-timer" class="text-sm font-bold" data-deadline="<%= @event.rsvp_deadline.to_i * 1000 %>">
                 <!-- El countdown se actualizará con JavaScript -->
