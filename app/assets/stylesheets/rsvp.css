@@ -68,7 +68,7 @@
 /* Bee Card Styles */
 .bee-card {
   background: linear-gradient(145deg, #FFFFFF 0%, var(--bee-light-yellow) 100%);
-  border: 3px solid var(--bee-yellow);
+  border: 3px solid #9f7aea;
   border-radius: 20px;
   box-shadow: 
     0 10px 25px rgba(255, 193, 7, 0.3),
@@ -104,7 +104,7 @@
 
 /* Hexagon pattern for card header */
 .bee-card-header {
-  background: linear-gradient(135deg, var(--bee-yellow) 0%, var(--bee-amber) 50%, var(--bee-dark-yellow) 100%);
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
   padding: 2rem;
   color: var(--bee-black);
   position: relative;
