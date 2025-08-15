@@ -33,6 +33,57 @@
     <% end %>
   </div>
 
+  <!-- Formulario de nueva invitación -->
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-4">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+        <tr class="bg-gray-50" data-controller="invitation-form">
+          <%= form_with(model: [@event, Invitation.new], local: true, class: "w-full", data: { invitation_form_target: "form", action: "submit->invitation-form#submit" }) do |f| %>
+            <td class="px-6 py-3">
+              <%= f.text_field :name,
+                           data: { invitation_form_target: "nameInput" },
+                           class:
+                             "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                           placeholder: "Name" %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.email_field :email,
+                            data: { invitation_form_target: "emailInput" },
+                            class:
+                              "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                            placeholder: "Email" %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.telephone_field :phone,
+                                data: { invitation_form_target: "phoneInput" },
+                                class:
+                                  "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+                                placeholder: "Phone" %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.select :family_group_id,
+                          options_from_collection_for_select(@event.family_groups, :id, :name),
+                          { prompt: "Sin grupo" },
+                          { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", data: { invitation_form_target: "familyGroupSelect" } } %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.text_field :status,
+                           value: "pending",
+                           disabled: true,
+                           class:
+                             "w-full rounded-md border-gray-300 bg-gray-100 text-gray-400 shadow-sm" %>
+            </td>
+            <td class="px-6 py-3">
+              <%= f.submit "Add",
+                       class:
+                         "w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -111,49 +162,6 @@
             </td>
           </tr>
         <% end %>
-        <tr class="bg-gray-50 mb-6" data-controller="invitation-form">
-          <%= form_with(model: [@event, Invitation.new], local: true, class: "w-full", data: { invitation_form_target: "form", action: "submit->invitation-form#submit" }) do |f| %>
-            <td class="px-6 py-3">
-              <%= f.text_field :name,
-                           data: { invitation_form_target: "nameInput" },
-                           class:
-                             "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
-                           placeholder: "Name" %>
-            </td>
-            <td class="px-6 py-3">
-              <%= f.email_field :email,
-                            data: { invitation_form_target: "emailInput" },
-                            class:
-                              "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
-                            placeholder: "Email" %>
-            </td>
-            <td class="px-6 py-3">
-              <%= f.telephone_field :phone,
-                                data: { invitation_form_target: "phoneInput" },
-                                class:
-                                  "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
-                                placeholder: "Phone" %>
-            </td>
-            <td class="px-6 py-3">
-              <%= f.select :family_group_id,
-                          options_from_collection_for_select(@event.family_groups, :id, :name),
-                          { prompt: "Sin grupo" },
-                          { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", data: { invitation_form_target: "familyGroupSelect" } } %>
-            </td>
-            <td class="px-6 py-3">
-              <%= f.text_field :status,
-                           value: "pending",
-                           disabled: true,
-                           class:
-                             "w-full rounded-md border-gray-300 bg-gray-100 text-gray-400 shadow-sm" %>
-            </td>
-            <td class="px-6 py-3">
-              <%= f.submit "Add",
-                       class:
-                         "w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
-            </td>
-          <% end %>
-        </tr>
       </tbody>
     </table>
   </div>
