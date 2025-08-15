@@ -6,6 +6,7 @@
 #  description   :text
 #  end_time      :datetime
 #  location      :string
+#  map_url       :string
 #  rsvp_deadline :datetime
 #  start_time    :datetime
 #  title         :string
@@ -30,6 +31,7 @@ class Event < ApplicationRecord
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 1000 }
   validates :location, length: { maximum: 255 }
+  validates :map_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, allow_blank: true
   validates :start_time, presence: true
   validate :end_time_after_start_time, if: -> { start_time.present? && end_time.present? }
   validate :rsvp_deadline_before_start_time, if: -> { rsvp_deadline.present? && start_time.present? }

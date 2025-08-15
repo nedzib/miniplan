@@ -8,6 +8,7 @@
 #  description   :text
 #  end_time      :datetime
 #  location      :string
+#  map_url       :string
 #  rsvp_deadline :datetime
 #  start_time    :datetime
 #  title         :string

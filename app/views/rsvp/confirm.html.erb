@@ -175,7 +175,19 @@
               </div>
               <div class="min-w-0 flex-1">
                 <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Ubicación del Jardín</h3>
-                <p class="text-sm sm:text-base break-words" style="color: var(--bee-brown);"><%= @event.location %></p>
+                <p class="text-sm sm:text-base break-words mb-3" style="color: var(--bee-brown);"><%= @event.location %></p>
+                <% if @event.map_url.present? %>
+                  <div class="mt-3">
+                    <%= link_to @event.map_url, 
+                        target: "_blank", 
+                        rel: "noopener noreferrer",
+                        class: "inline-flex items-center gap-2 px-4 py-2 text-black font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
+                        style: "background: linear-gradient(135deg, #9f7aea 0%, #e9d5ff 100%); border: 2px solid #8b5cf6;" do %>
+                      <span class="text-sm">🗺️</span>
+                      <span>Ver en mapa</span>
+                    <% end %>
+                  </div>
+                <% end %>
               </div>
             </div>
           <% end %>
