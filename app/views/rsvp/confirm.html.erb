@@ -5,13 +5,51 @@
 <% content_for :og_image_alt, "Invitación para #{@event.title} - #{@invitation.name}" %>
 <% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
 
-<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>">
+<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if @event.rsvp_deadline && !rsvp_deadline_passed?(@event) && @invitation.status != 'accepted' %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
   <!-- Floating bees for ambiance -->
   <div class="floating-bee">🐝</div>
   <div class="floating-bee">🐝</div>
   <div class="floating-bee">🐝</div>
   
   <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Countdown Section (si hay deadline, no ha pasado, y no está confirmado) -->
+    <% if @event.rsvp_deadline && !rsvp_deadline_passed?(@event) && @invitation.status != 'accepted' %>
+      <div class="text-center mb-3 animate-fade-in">
+        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background-color: #f97316; border: 1px solid #ea580c;">
+          <div class="flex items-center justify-center space-x-2">
+            <div class="text-center">
+              <p class="text-xs font-medium">Confirmaciones hasta:</p>
+              <p class="text-xs font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
+              <div id="countdown-timer" class="text-sm font-bold" data-deadline="<%= @event.rsvp_deadline.to_i * 1000 %>">
+                <!-- El countdown se actualizará con JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Mensaje si el deadline ha pasado -->
+    <% if @event.rsvp_deadline && rsvp_deadline_passed?(@event) %>
+      <div class="text-center mb-6 sm:mb-8 animate-fade-in">
+        <div class="bee-card mb-4" style="background: linear-gradient(135deg, #FF6B6B 0%, #DC143C 100%); border: 3px solid #B22222;">
+          <div class="p-4 sm:p-6">
+            <div class="text-2xl mb-2">🕰️</div>
+            <h3 class="text-lg sm:text-xl font-bold mb-2 text-white">Tiempo límite de confirmación cerrado</h3>
+            <p class="text-sm sm:text-base text-white mb-2">
+              Las confirmaciones cerraron el <%= l(@event.rsvp_deadline, format: :long) %>
+            </p>
+            <% unless @invitation.status == 'pending' %>
+              <p class="text-sm text-white">
+                Tu estado actual: <span class="font-bold">
+                  <%= @invitation.status == 'accepted' ? 'Confirmado ✅' : 'Declinado ❌' %>
+                </span>
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
     <!-- Header con animación -->
     <div class="text-center mb-6 sm:mb-8 animate-fade-in">
       <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg mb-4 border-3 sm:border-4 border-yellow-300">
@@ -204,25 +242,43 @@
         </div>
 
         <!-- Botones de confirmación -->
-        <div data-rsvp-target="confirmationSection">
-          <div class="flex flex-col gap-3 sm:gap-4 max-w-md mx-auto">
-            <button 
-              data-action="click->rsvp#accept"
-              data-rsvp-target="acceptButton"
-              class="bee-button bee-button-accept">
-              <span class="bee-icon text-lg">🐝</span>
-              <span class="flex-1">¡Sí, volaré al panal!</span>
-            </button>
-            
-            <button 
-              data-action="click->rsvp#decline"
-              data-rsvp-target="declineButton"
-              class="bee-button bee-button-decline">
-              <span class="text-lg">💔</span>
-              <span class="flex-1">No podré volar esta vez</span>
-            </button>
+        <% if rsvp_deadline_active?(@event) %>
+          <div data-rsvp-target="confirmationSection">
+            <div class="flex flex-col gap-3 sm:gap-4 max-w-md mx-auto">
+              <button 
+                data-action="click->rsvp#accept"
+                data-rsvp-target="acceptButton"
+                class="bee-button bee-button-accept">
+                <span class="bee-icon text-lg">🐝</span>
+                <span class="flex-1">¡Sí, volaré al panal!</span>
+              </button>
+              
+              <button 
+                data-action="click->rsvp#decline"
+                data-rsvp-target="declineButton"
+                class="bee-button bee-button-decline">
+                <span class="text-lg">💔</span>
+                <span class="flex-1">No podré volar esta vez</span>
+              </button>
+            </div>
           </div>
-        </div>
+        <% else %>
+          <div class="text-center p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); border-color: #CCCCCC;">
+            <div class="text-2xl mb-2">🔒</div>
+            <h3 class="text-lg sm:text-xl font-semibold mb-2" style="color: #666;">
+              Confirmaciones cerradas
+            </h3>
+            <p class="text-sm sm:text-base" style="color: #888;">
+              El tiempo para confirmar tu asistencia ha terminado.
+              <% if @invitation.status != 'pending' %>
+                <br>Tu estado actual se mantiene como: 
+                <span class="font-bold">
+                  <%= @invitation.status == 'accepted' ? 'Confirmado ✅' : 'Declinado ❌' %>
+                </span>
+              <% end %>
+            </p>
+          </div>
+        <% end %>
 
         <!-- Sección de respuesta (oculta inicialmente) -->
         <div data-rsvp-target="responseSection" class="hidden">
@@ -320,4 +376,54 @@ function showNotification(message, type = 'success') {
     notification.remove();
   }, 4000);
 }
+
+// Countdown Timer
+document.addEventListener('DOMContentLoaded', function() {
+  const countdownElement = document.getElementById('countdown-timer');
+  if (countdownElement) {
+    const deadline = parseInt(countdownElement.dataset.deadline);
+    
+    function updateCountdown() {
+      const now = Date.now();
+      const timeLeft = deadline - now;
+      
+      if (timeLeft <= 0) {
+        countdownElement.innerHTML = '⏰ ¡Tiempo agotado!';
+        // Opcional: recargar la página para mostrar el estado "cerrado"
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+        return;
+      }
+      
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+      
+      let countdownText = '';
+      
+      if (days > 0) {
+        countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      } else if (hours > 0) {
+        countdownText = `${hours}h ${minutes}m ${seconds}s`;
+      } else if (minutes > 0) {
+        countdownText = `${minutes}m ${seconds}s`;
+      } else {
+        countdownText = `${seconds}s`;
+      }
+      
+      countdownElement.innerHTML = `⏰ ${countdownText}`;
+    }
+    
+    // Actualizar inmediatamente y luego cada segundo
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+    
+    // Limpiar el intervalo cuando se desmonte la página
+    window.addEventListener('beforeunload', () => {
+      clearInterval(countdownInterval);
+    });
+  }
+});
 </script>

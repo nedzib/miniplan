@@ -20,6 +20,18 @@ class RsvpController < ApplicationController
                     Invitation.find(params[:invitation_id])
     end
 
+    @event = @invitation.event
+
+    # Verificar si el deadline de RSVP ha pasado
+    if @event.rsvp_deadline_passed?
+      render json: {
+        success: false,
+        error: "RSVP deadline has passed",
+        message: "Las confirmaciones para este evento ya han cerrado."
+      }, status: :forbidden
+      return
+    end
+
     # Actualizar la invitación principal
     if @invitation.update(status: params[:status])
 

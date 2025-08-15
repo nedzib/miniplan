@@ -66,6 +66,29 @@
               <% end %>
             </div>
 
+            <% if @event.rsvp_deadline.present? %>
+              <div>
+                <h3 class="font-semibold text-gray-700 mb-2 flex items-center">
+                  <i class="nf nf-fa-clock mr-2 text-gray-500"></i>
+                  RSVP Deadline
+                </h3>
+                <div class="flex items-center space-x-3">
+                  <p class="text-gray-600"><%= @event.rsvp_deadline.strftime("%B %d, %Y at %I:%M %p") %></p>
+                  <% if @event.rsvp_deadline_passed? %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      <i class="nf nf-fa-lock mr-1"></i>
+                      Closed
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <i class="nf nf-fa-unlock mr-1"></i>
+                      Active
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
             <% if @event.location.present? %>
               <div>
                 <h3 class="font-semibold text-gray-700 mb-2 flex items-center">

@@ -2,15 +2,16 @@
 #
 # Table name: events
 #
-#  id          :bigint           not null, primary key
-#  description :text
-#  end_time    :datetime
-#  location    :string
-#  start_time  :datetime
-#  title       :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  user_id     :bigint           not null
+#  id            :bigint           not null, primary key
+#  description   :text
+#  end_time      :datetime
+#  location      :string
+#  rsvp_deadline :datetime
+#  start_time    :datetime
+#  title         :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  user_id       :bigint           not null
 #
 # Indexes
 #

@@ -74,6 +74,18 @@
           </div>
         </div>
 
+        <div>
+          <%= form.label :rsvp_deadline, class: "block text-sm font-medium text-gray-700 mb-2" do %>
+            <i class="nf nf-fa-clock mr-2"></i>RSVP Deadline (Optional)
+          <% end %>
+          <%= form.datetime_local_field :rsvp_deadline, 
+              class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200",
+              placeholder: "Set deadline for confirmations" %>
+          <p class="mt-1 text-sm text-gray-500">
+            <i class="nf nf-fa-info_circle mr-1"></i>Leave empty for no deadline. After this date, guests won't be able to change their RSVP.
+          </p>
+        </div>
+
         <div class="flex justify-end space-x-4 pt-6">
           <%= link_to events_path, 
               class: "px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium" do %>
