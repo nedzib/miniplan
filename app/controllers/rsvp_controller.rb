@@ -12,6 +12,64 @@ class RsvpController < ApplicationController
     end
   end
 
+  def family_confirm
+    @family_group = FamilyGroup.find_by!(hash_id: params[:hash_id])
+    @event = @family_group.event
+    @invitations = @family_group.invitations
+  end
+
+  def family_update
+    @family_group = FamilyGroup.find_by!(hash_id: params[:hash_id])
+    @event = @family_group.event
+
+    # Verificar si el deadline de RSVP ha pasado
+    if @event.rsvp_deadline_passed?
+      render json: {
+        success: false,
+        error: "RSVP deadline has passed",
+        message: "Las confirmaciones para este evento ya han cerrado."
+      }, status: :forbidden
+      return
+    end
+
+    # Actualizar las invitaciones del grupo familiar
+    success_count = 0
+    error_messages = []
+
+    if params[:family_members].present?
+      params[:family_members].each do |member_id, member_data|
+        invitation = @family_group.invitations.find_by(id: member_id)
+        if invitation && member_data[:status].present?
+          if invitation.update(status: member_data[:status])
+            success_count += 1
+          else
+            error_messages << "Error actualizando #{invitation.name}: #{invitation.errors.full_messages.join(', ')}"
+          end
+        end
+      end
+    end
+
+    if success_count > 0
+      message = success_count == 1 ?
+        "Confirmación actualizada con amor y paz 🌻" :
+        "#{success_count} confirmaciones actualizadas con buenas vibras ✌️"
+
+      render json: {
+        success: true,
+        message: message
+      }
+    else
+      error_message = error_messages.any? ?
+        error_messages.join(". ") :
+        "No se pudo actualizar ninguna confirmación"
+
+      render json: {
+        success: false,
+        message: error_message
+      }, status: :unprocessable_entity
+    end
+  end
+
   def update
     # Try to find by hash_id first (new secure method), fallback to invitation_id (old method)
     @invitation = if params[:hash_id]

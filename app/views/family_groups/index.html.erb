@@ -36,11 +36,22 @@
                 <div class="border border-gray-200 rounded-lg p-4">
                   <div class="flex justify-between items-start mb-3">
                     <h3 class="font-medium text-gray-900"><%= group.name %></h3>
-                    <%= button_to "Eliminar", event_family_group_path(@event, group), 
-                        method: :delete,
-                        data: { confirm: "¿Estás seguro de que quieres eliminar este grupo? Los invitados serán movidos a 'Sin grupo'." },
-                        class: "text-red-600 hover:text-red-800 text-sm bg-transparent border-none cursor-pointer",
-                        form: { style: "display: inline;" } %>
+                    <div class="flex gap-2">
+                      <% if group.hash_id.present? %>
+                        <button 
+                          onclick="copyGroupLink('<%= rsvp_family_confirm_url(group.hash_id) %>', '<%= group.name %>')"
+                          class="text-blue-600 hover:text-blue-800 text-sm bg-transparent border-none cursor-pointer flex items-center gap-1"
+                          title="Copiar link de confirmación grupal">
+                          <i class="text-sm">🔗</i>
+                          <span class="text-xs">Copiar Link</span>
+                        </button>
+                      <% end %>
+                      <%= button_to "Eliminar", event_family_group_path(@event, group), 
+                          method: :delete,
+                          data: { confirm: "¿Estás seguro de que quieres eliminar este grupo? Los invitados serán movidos a 'Sin grupo'." },
+                          class: "text-red-600 hover:text-red-800 text-sm bg-transparent border-none cursor-pointer",
+                          form: { style: "display: inline;" } %>
+                    </div>
                   </div>
                   <div class="space-y-2">
                     <% if group.invitations.any? %>
@@ -109,3 +120,78 @@
     </div>
   </div>
 </div>
+
+<script>
+function copyGroupLink(url, groupName) {
+  navigator.clipboard.writeText(url).then(function() {
+    showNotification(`Link del grupo "${groupName}" copiado al portapapeles 🐝`, 'success');
+  }).catch(function(err) {
+    // Fallback para navegadores que no soportan clipboard API
+    fallbackCopyToClipboard(url);
+    showNotification(`Link del grupo "${groupName}" copiado 🐝`, 'success');
+  });
+}
+
+function fallbackCopyToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+}
+
+function showNotification(message, type = 'success') {
+  const notification = document.createElement('div');
+  
+  if (type === 'success') {
+    notification.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: #10b981;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 20rem;
+      font-size: 0.875rem;
+      border: 2px solid #059669;
+    `;
+  } else {
+    notification.style.cssText = `
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: #ef4444;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      max-width: 20rem;
+      font-size: 0.875rem;
+      border: 2px solid #dc2626;
+    `;
+  }
+  
+  const icon = type === 'success' ? '✅' : '❌';
+  notification.innerHTML = `
+    <span style="font-size: 1.125rem;">${icon}</span>
+    <span>${message}</span>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 4000);
+}
+</script>

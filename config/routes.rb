@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   end
   get "landing/index"
   get "rsvp/confirm/:hash_id", to: "rsvp#confirm", as: :rsvp_confirm
+  get "rsvp/family/:hash_id", to: "rsvp#family_confirm", as: :rsvp_family_confirm
+  patch "rsvp/family/:hash_id", to: "rsvp#family_update", as: :rsvp_family_update
   get "rsvp/partial/:name", to: "rsvp#partial"
   resource :session
   resource :registration, only: [ :new, :create ]

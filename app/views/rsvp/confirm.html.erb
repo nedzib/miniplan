@@ -1,6 +1,6 @@
 <% content_for :title, "#{@event.title} - Invitación para #{@invitation.name}" %>
 <% content_for :description, "#{@invitation.name}, estás invitado(a) a #{@event.title}. #{@event.description.present? ? @event.description : 'Te esperamos en este evento especial.'}" %>
-<% content_for :og_title, "🐝 #{@event.title} - Invitación Especial" %>
+<% content_for :og_title, "✌️ #{@event.title} - Invitación Especial" %>
 <% content_for :og_description, "#{@invitation.name}, tienes una invitación especial para #{@event.title}. #{@event.start_time ? "📅 #{format_date_spanish(@event.start_time)}" : ""} #{@event.location.present? ? "📍 #{@event.location}" : ""}" %>
 <% content_for :og_image_alt, "Invitación para #{@event.title} - #{@invitation.name}" %>
 <% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
@@ -18,23 +18,208 @@
                    (@invitation.status != 'accepted' || has_pending_family_members)
 %>
 
-<div class="py-6 w-full bee-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if show_countdown %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
-  <!-- Floating bees and flowers for ambiance -->
-  <div class="floating-bee">🐝</div>
-  <div class="floating-bee">🌸</div>
-  <div class="floating-bee">🐝</div>
-  <div class="floating-bee">🐝</div>
-  <div class="floating-bee">🌸</div>
+<style>
+  .hippie-background {
+    background: linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  .floating-element {
+    position: absolute;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .floating-element:nth-child(even) {
+    animation-delay: -3s;
+    animation-duration: 8s;
+  }
+  
+  .floating-element:nth-child(3n) {
+    animation-delay: -1s;
+    animation-duration: 7s;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+  
+  .hippie-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 2px solid #d4a574;
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 10;
+  }
+  
+  .hippie-card-header {
+    background: linear-gradient(135deg, #d4a574 0%, #e6c994 100%);
+    color: #5d4e37;
+    padding: 1.5rem;
+    border-radius: 18px 18px 0 0;
+    border-bottom: 3px solid #c49a6c;
+  }
+  
+  .hippie-detail-card {
+    background: rgba(255, 248, 240, 0.8);
+    border: 2px solid #e6c994;
+    border-radius: 15px;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .hippie-icon-wrapper {
+    background: linear-gradient(135deg, #d4a574 0%, #e6c994 100%);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #c49a6c;
+    flex-shrink: 0;
+  }
+  
+  .hippie-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid;
+    cursor: pointer;
+    min-height: 3.5rem;
+    font-size: 1rem;
+  }
+  
+  .hippie-button-accept {
+    background: linear-gradient(135deg, #90c695 0%, #a8d5aa 100%);
+    border-color: #7bb77f;
+    color: #2d5016;
+  }
+  
+  .hippie-button-accept:hover {
+    background: linear-gradient(135deg, #7bb77f 0%, #90c695 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(123, 183, 127, 0.4);
+  }
+  
+  .hippie-button-decline {
+    background: linear-gradient(135deg, #e4a574 0%, #e6b894 100%);
+    border-color: #d4956a;
+    color: #8b4513;
+  }
+  
+  .hippie-button-decline:hover {
+    background: linear-gradient(135deg, #d4956a 0%, #e4a574 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 149, 106, 0.4);
+  }
+  
+  .rsvp-status-indicator {
+    transition: all 0.3s ease;
+  }
+  
+  .rsvp-status-accepted {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+    border-color: #90c695 !important;
+  }
+  
+  .rsvp-status-declined {
+    background: linear-gradient(135deg, #fdf2f2 0%, #fef7f7 100%);
+    border-color: #e4a574 !important;
+  }
+  
+  .rsvp-status-pending {
+    background: linear-gradient(135deg, #fef3e2 0%, #fef9f3 100%);
+    border-color: #d4a574 !important;
+  }
+  
+  .hippie-alert {
+    padding: 1rem;
+    border-radius: 15px;
+    border: 2px solid;
+    margin: 1rem 0;
+  }
+  
+  .hippie-alert-success {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+    border-color: #90c695;
+    color: #2d5016;
+  }
+  
+  .hippie-alert-warning {
+    background: linear-gradient(135deg, #fef3e2 0%, #fef9f3 100%);
+    border-color: #d4a574;
+    color: #8b4513;
+  }
+  
+  .hippie-response-section {
+    padding: 2rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    border: 2px solid #e6c994;
+  }
+  
+  .hippie-response-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hippie-response-success .hippie-response-icon {
+    animation: bounce 2s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="py-6 w-full hippie-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if show_countdown %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
+  <!-- Floating hippie elements -->
+  <div class="floating-element" style="top: 10%; left: 5%; font-size: 2rem;">🌻</div>
+  <div class="floating-element" style="top: 15%; right: 8%; font-size: 1.5rem;">✌️</div>
+  <div class="floating-element" style="top: 25%; left: 15%; font-size: 1.8rem;">🌿</div>
+  <div class="floating-element" style="top: 35%; right: 20%; font-size: 2.2rem;">☮️</div>
+  <div class="floating-element" style="top: 45%; left: 8%; font-size: 1.6rem;">�</div>
+  <div class="floating-element" style="top: 55%; right: 12%; font-size: 1.9rem;">🍄</div>
+  <div class="floating-element" style="top: 65%; left: 25%; font-size: 1.7rem;">🦋</div>
+  <div class="floating-element" style="top: 75%; right: 15%; font-size: 2rem;">🌸</div>
   
   <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <!-- Countdown Section -->
     <% if show_countdown %>
       <div class="text-center mb-3 animate-fade-in">
-        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background-color: #f97316; border: 1px solid #ea580c;">
+        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, #d4a574 0%, #e4a574 100%); border: 2px solid #c49a6c;">
           <div class="flex items-center justify-center space-x-2">
             <div class="text-center flex flex-row">
               <% if @invitation.status == 'accepted' && has_pending_family_members %>
-                <p class="text-xs font-medium">Confirma a tus familiares hasta:</p>
+                <p class="text-xs font-medium">Confirma a tu tribu hasta:</p>
               <% else %>
                 <p class="text-xs font-medium">Confirmaciones hasta:</p>
               <% end %>
@@ -51,9 +236,9 @@
     <!-- Mensaje si el deadline ha pasado -->
     <% if @event.rsvp_deadline && rsvp_deadline_passed?(@event) %>
       <div class="text-center mb-6 sm:mb-8 animate-fade-in">
-        <div class="bee-card mb-4" style="background: linear-gradient(135deg, #FF6B6B 0%, #DC143C 100%); border: 3px solid #B22222;">
+        <div class="hippie-card mb-4" style="background: linear-gradient(135deg, #e4a574 0%, #d4956a 100%); border: 3px solid #c49a6c;">
           <div class="p-4 sm:p-6">
-            <div class="text-2xl mb-2">🕰️</div>
+            <div class="text-2xl mb-2">⏰</div>
             <h3 class="text-lg sm:text-xl font-bold mb-2 text-white">Tiempo límite de confirmación cerrado</h3>
             <p class="text-sm sm:text-base text-white mb-2">
               Las confirmaciones cerraron el <%= l(@event.rsvp_deadline, format: :long) %>
@@ -61,7 +246,7 @@
             <% unless @invitation.status == 'pending' %>
               <p class="text-sm text-white">
                 Tu estado actual: <span class="font-bold">
-                  <%= @invitation.status == 'accepted' ? 'Confirmado ✅' : 'Declinado ❌' %>
+                  <%= @invitation.status == 'accepted' ? 'En armonía ✌️' : 'En pausa 🌙' %>
                 </span>
               </p>
             <% end %>
@@ -69,21 +254,22 @@
         </div>
       </div>
     <% end %>
+    
     <!-- Header con animación -->
     <div class="text-center mb-6 sm:mb-8 animate-fade-in">
       <div class="inline-flex items-center justify-center gap-2 mb-4">
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #9f7aea;">
-          <div class="bee-icon text-3xl sm:text-4xl">🌸</div>
+        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #d4a574;">
+          <div class="text-3xl sm:text-4xl">�</div>
         </div>
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4 border-yellow-300">
-          <div class="bee-icon text-3xl sm:text-4xl">🐝</div>
+        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #90c695;">
+          <div class="text-3xl sm:text-4xl">✌️</div>
         </div>
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #9f7aea;">
-          <div class="bee-icon text-3xl sm:text-4xl">🌸</div>
+        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #d4a574;">
+          <div class="text-3xl sm:text-4xl">�</div>
         </div>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-bold mb-2 px-2" style="color: var(--bee-black); text-shadow: 2px 2px 4px rgba(255,193,7,0.3);">
-        ¡Te invitamos a nuestro jardín! 🍯🌸
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 px-2" style="color: #8b4513; text-shadow: 2px 2px 4px rgba(212, 165, 116, 0.3);">
+        ¡Te invitamos a nuestro gathering! �✌️
       </h1>
     </div>
 

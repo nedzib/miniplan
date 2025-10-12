@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_15_212426) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_12_183321) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,7 +33,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_15_212426) do
     t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "hash_id"
     t.index ["event_id"], name: "index_family_groups_on_event_id"
+    t.index ["hash_id"], name: "index_family_groups_on_hash_id", unique: true
   end
 
   create_table "invitations", force: :cascade do |t|
