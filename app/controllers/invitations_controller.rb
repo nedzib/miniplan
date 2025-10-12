@@ -46,6 +46,11 @@ class InvitationsController < ApplicationController
     redirect_to event_invitations_path(@event), notice: "Invitation was successfully deleted."
   end
 
+  def reset_all
+    @event.invitations.update_all(status: :pending)
+    redirect_to event_invitations_path(@event), notice: "Todas las invitaciones han sido reseteadas a estado pendiente."
+  end
+
   private
 
   def set_event

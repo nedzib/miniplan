@@ -4,7 +4,11 @@ Rails.application.routes.draw do
       resources :lineas, except: [ :show ]
     end
     resources :family_groups, only: [ :index, :create, :destroy ]
-    resources :invitations, except: [ :show ]
+    resources :invitations, except: [ :show ] do
+      collection do
+        patch :reset_all
+      end
+    end
   end
   get "landing/index"
   get "rsvp/confirm/:hash_id", to: "rsvp#confirm", as: :rsvp_confirm

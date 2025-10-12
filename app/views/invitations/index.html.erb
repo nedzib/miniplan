@@ -26,11 +26,25 @@
       <%= @event.invitations.where(status: "accepted").count %>
     </p>
     
-    <%= link_to event_family_groups_path(@event), 
-        class: "bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 inline-flex items-center" do %>
-      <i class="nf nf-fa-users mr-2"></i>
-      Grupos Familiares
-    <% end %>
+    <div class="flex space-x-3">
+      <%= button_to reset_all_event_invitations_path(@event),
+          method: :patch,
+          class: "bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 inline-flex items-center",
+          form: {
+            data: {
+              turbo_confirm: "¿Estás seguro de que quieres resetear todas las invitaciones a estado pendiente? Esta acción no se puede deshacer.",
+            },
+          } do %>
+        <i class="nf nf-fa-refresh mr-2"></i>
+        Resetear Todas
+      <% end %>
+      
+      <%= link_to event_family_groups_path(@event), 
+          class: "bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 inline-flex items-center" do %>
+        <i class="nf nf-fa-users mr-2"></i>
+        Grupos Familiares
+      <% end %>
+    </div>
   </div>
 
   <!-- Formulario de nueva invitación -->
