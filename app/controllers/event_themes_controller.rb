@@ -1,6 +1,6 @@
 class EventThemesController < ApplicationController
   include EventFinder
-  
+
   before_action :set_event
   before_action :set_theme
   before_action :ensure_owner!
@@ -14,8 +14,8 @@ class EventThemesController < ApplicationController
 
   def update
     if @theme.update(theme_params)
-      redirect_to edit_event_theme_path(@event), 
-                  notice: 'Tema actualizado exitosamente.'
+      redirect_to edit_event_theme_path(@event),
+                  notice: "Tema actualizado exitosamente."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class EventThemesController < ApplicationController
   end
 
   def ensure_owner!
-    redirect_to root_path, alert: 'No tienes permisos para editar este evento.' unless @event.user == Current.user
+    redirect_to root_path, alert: "No tienes permisos para editar este evento." unless @event.user == Current.user
   end
 
   def theme_params

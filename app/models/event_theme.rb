@@ -45,7 +45,7 @@ class EventTheme < ApplicationRecord
 
   # Métodos para obtener configuraciones con valores por defecto
   def header_emojis
-    return ["🌻", "✌️", "🌸"] if header_emoji.blank?
+    return [ "🌻", "✌️", "🌸" ] if header_emoji.blank?
     header_emoji.split(",").map(&:strip)
   end
 
@@ -57,11 +57,11 @@ class EventTheme < ApplicationRecord
   end
 
   def text_color
-    contrast_mode == 'dark' ? '#ffffff' : '#000000'
+    contrast_mode == "dark" ? "#ffffff" : "#000000"
   end
 
   def background_text_color
-    contrast_mode == 'dark' ? '#2d3748' : '#1a202c'
+    contrast_mode == "dark" ? "#2d3748" : "#1a202c"
   end
 
   def card_background

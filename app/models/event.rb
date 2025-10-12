@@ -29,7 +29,7 @@
 #
 class Event < ApplicationRecord
   belongs_to :user
-  belongs_to :theme, class_name: 'EventTheme', optional: true, dependent: :destroy
+  belongs_to :theme, class_name: "EventTheme", optional: true, dependent: :destroy
   has_many :invitations, dependent: :destroy
   has_many :family_groups, dependent: :destroy
   has_many :presupuestos, dependent: :destroy
@@ -81,13 +81,13 @@ class Event < ApplicationRecord
 
   def create_default_theme
     return theme if theme.present?
-    
+
     new_theme = EventTheme.create!(
       name: "Tema de #{title}",
-      primary_color: '#d4a574',
-      secondary_color: '#90c695',
-      contrast_mode: 'dark',
-      background_gradient: 'linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%)',
+      primary_color: "#d4a574",
+      secondary_color: "#90c695",
+      contrast_mode: "dark",
+      background_gradient: "linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%)",
       floating_elements: [
         { emoji: "🌻", top: "10%", left: "5%", size: "2rem" },
         { emoji: "✌️", top: "15%", right: "8%", size: "1.5rem" },
@@ -116,7 +116,7 @@ class Event < ApplicationRecord
       location_icon: "🌍",
       gifts_icon: "🎁"
     )
-    
+
     update_column(:theme_id, new_theme.id) if persisted?
     new_theme
   end

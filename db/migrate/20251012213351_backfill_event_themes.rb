@@ -36,7 +36,7 @@ class BackfillEventThemes < ActiveRecord::Migration[8.0]
         location_icon: "🌍",
         gifts_icon: "🎁"
       )
-      
+
       event.update!(theme_id: theme.id)
     end
   end
