@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       resources :lineas, except: [ :show ]
     end
     resources :family_groups, only: [ :index, :create, :destroy ]
-    resources :gifts, only: [ :index, :show, :create ]
+    resources :gifts
     resources :invitations, except: [ :show ] do
       collection do
         patch :reset_all

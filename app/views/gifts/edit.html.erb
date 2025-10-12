@@ -1,0 +1,93 @@
+<% content_for :title, "Editar Regalo - #{@event.title}" %>
+
+<div class="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 py-8">
+  <!-- Floating Gift Elements -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-[10%] left-[5%] text-4xl animate-bounce" style="animation-delay: 0s;">🎁</div>
+    <div class="absolute top-[15%] right-[8%] text-3xl animate-bounce" style="animation-delay: 1s;">🎀</div>
+    <div class="absolute top-[25%] left-[15%] text-2xl animate-bounce" style="animation-delay: 2s;">🎉</div>
+    <div class="absolute top-[35%] right-[20%] text-3xl animate-bounce" style="animation-delay: 3s;">🎊</div>
+    <div class="absolute top-[45%] left-[8%] text-2xl animate-bounce" style="animation-delay: 4s;">💝</div>
+    <div class="absolute top-[55%] right-[12%] text-3xl animate-bounce" style="animation-delay: 0.5s;">🎈</div>
+    <div class="absolute bottom-[20%] left-[25%] text-4xl animate-bounce" style="animation-delay: 2.5s;">🌟</div>
+    <div class="absolute bottom-[10%] right-[30%] text-2xl animate-bounce" style="animation-delay: 1.5s;">✨</div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center gap-3 mb-4">
+        <div class="inline-block p-4 bg-white rounded-full shadow-lg border-4 border-blue-200">
+          <div class="text-4xl">✏️</div>
+        </div>
+        <div class="inline-block p-4 bg-white rounded-full shadow-lg border-4 border-purple-200">
+          <div class="text-4xl">🎁</div>
+        </div>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        Editar Regalo ✏️
+      </h1>
+      <p class="text-xl text-gray-600 mb-2">
+        Para: <span class="font-semibold text-purple-700"><%= @event.title %></span>
+      </p>
+      <p class="text-base text-gray-500">
+        Actualiza la información del regalo
+      </p>
+    </div>
+
+    <!-- Form to Edit Gift -->
+    <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-blue-200">
+      <div class="text-center mb-6">
+        <div class="text-3xl mb-2">📝</div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Editar Nombre del Regalo</h2>
+        <p class="text-sm text-gray-600">Modifica el nombre del regalo según sea necesario</p>
+      </div>
+
+      <%= form_with model: [@event, @gift], 
+                    local: true, 
+                    class: "space-y-6" do |form| %>
+        
+        <div>
+          <%= form.label :name, "Nombre del Regalo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_field :name, 
+                              placeholder: "Ej: Set de vajilla, Lámpara de mesa...",
+                              class: "w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                              required: true %>
+          <% if @gift.errors[:name].any? %>
+            <p class="text-red-500 text-xs mt-1"><%= @gift.errors[:name].first %></p>
+          <% end %>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+          <%= form.submit "💾 Guardar Cambios", 
+                         class: "flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-xl text-lg border-2 border-white/20" %>
+          
+          <%= link_to event_gifts_path(@event), 
+              class: "flex-1 bg-gray-200 text-gray-700 font-bold py-4 px-6 rounded-xl hover:bg-gray-300 transition-all duration-200 text-lg text-center" do %>
+            🚫 Cancelar
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+        <div class="flex items-start">
+          <span class="text-blue-600 text-xl mr-2">ℹ️</span>
+          <div>
+            <h3 class="text-sm font-medium text-blue-800">Información</h3>
+            <p class="text-xs text-blue-700 mt-1">
+              Los cambios se aplicarán inmediatamente y serán visibles para todos los invitados.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-8">
+      <%= link_to event_gifts_path(@event), class: "inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm text-gray-700 font-medium rounded-xl hover:bg-white transition-all duration-200 shadow-lg border border-gray-200" do %>
+        <span class="mr-2">←</span>
+        Volver a la Lista
+      <% end %>
+    </div>
+  </div>
+</div>

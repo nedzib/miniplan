@@ -3,7 +3,7 @@ class GiftsController < ApplicationController
   allow_unauthenticated_access only: [ :public_index, :public_create ]
 
   before_action :set_event
-  before_action :set_gift, only: [ :show ]
+  before_action :set_gift, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @gifts = @event.gifts.recent.includes(:event)
@@ -30,6 +30,30 @@ class GiftsController < ApplicationController
         }
         format.json { render json: { success: false, errors: @gift.errors.full_messages } }
       end
+    end
+  end
+
+  def edit
+    # Formulario de edición
+  end
+
+  def update
+    respond_to do |format|
+      if @gift.update(gift_params)
+        format.html { redirect_to event_gifts_path(@event), notice: "¡Regalo actualizado exitosamente! ✏️" }
+        format.json { render json: { success: true, message: "Regalo actualizado exitosamente", gift: @gift } }
+      else
+        format.html { render :edit }
+        format.json { render json: { success: false, errors: @gift.errors.full_messages } }
+      end
+    end
+  end
+
+  def destroy
+    @gift.destroy!
+    respond_to do |format|
+      format.html { redirect_to event_gifts_path(@event), notice: "Regalo eliminado exitosamente 🗑️" }
+      format.json { render json: { success: true, message: "Regalo eliminado exitosamente" } }
     end
   end
 
@@ -82,6 +106,6 @@ class GiftsController < ApplicationController
   end
 
   def gift_params
-    params.require(:gift).permit(:name, :description, :purchased_by)
+    params.require(:gift).permit(:name, :purchased_by)
   end
 end
