@@ -10,9 +10,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_12_203214) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_12_214047) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "event_themes", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "primary_color", null: false
+    t.string "secondary_color", null: false
+    t.string "contrast_mode", default: "dark", null: false
+    t.text "background_gradient"
+    t.text "floating_elements"
+    t.string "header_emoji"
+    t.string "title_template"
+    t.string "subtitle_template"
+    t.string "description_emojis"
+    t.string "accept_emoji"
+    t.string "decline_emoji"
+    t.string "accept_text"
+    t.string "decline_text"
+    t.text "success_message"
+    t.text "decline_message"
+    t.text "footer_message"
+    t.string "status_accepted_emoji"
+    t.string "status_declined_emoji"
+    t.string "status_pending_emoji"
+    t.string "date_icon", default: "⏰"
+    t.string "location_icon", default: "🌍"
+    t.string "gifts_icon", default: "🎁"
+    t.string "button_style_class"
+    t.string "card_style_class"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_event_themes_on_name"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "title"
@@ -26,7 +57,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_203214) do
     t.datetime "rsvp_deadline"
     t.string "map_url"
     t.string "hash_id"
+    t.bigint "theme_id"
     t.index ["hash_id"], name: "index_events_on_hash_id", unique: true
+    t.index ["theme_id"], name: "index_events_on_theme_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -244,6 +277,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_203214) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "events", "event_themes", column: "theme_id"
   add_foreign_key "events", "users"
   add_foreign_key "family_groups", "events"
   add_foreign_key "gifts", "events"

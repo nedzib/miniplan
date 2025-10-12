@@ -1,0 +1,296 @@
+<%
+  title = "Personalizar Tema - #{@event.title}"
+  content_for :title, title
+%>
+
+<div class="max-w-6xl mx-auto px-4 py-6">
+  <div class="mb-6">
+    <%= link_to event_path(@event), class: "inline-flex items-center text-sm text-gray-600 hover:text-gray-900" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Volver al evento
+    <% end %>
+  </div>
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Editor de Tema</h1>
+    <p class="text-gray-600">Personaliza completamente el aspecto de tu invitación</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Panel de edición -->
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+      <h2 class="text-xl font-semibold mb-6">Configuración del Tema</h2>
+      
+      <%= form_with model: @theme, url: event_theme_path(@event), local: true, 
+                    data: { controller: "theme-editor", action: "input->theme-editor#updatePreview" },
+                    class: "space-y-6" do |form| %>
+        
+        <!-- Nombre del tema -->
+        <div>
+          <%= form.label :name, "Nombre del tema", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_field :name, 
+                              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                              data: { theme_editor_target: "name" } %>
+          <%= render_field_error(@theme, :name) if @theme.errors[:name].any? %>
+        </div>
+
+        <!-- Colores -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :primary_color, "Color primario", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="flex items-center space-x-2">
+              <%= form.color_field :primary_color, 
+                                   class: "w-12 h-10 border border-gray-300 rounded cursor-pointer",
+                                   data: { theme_editor_target: "primaryColor" } %>
+              <%= form.text_field :primary_color, 
+                                  class: "flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "#d4a574",
+                                  data: { theme_editor_target: "primaryColorText" } %>
+            </div>
+            <%= render_field_error(@theme, :primary_color) if @theme.errors[:primary_color].any? %>
+          </div>
+
+          <div>
+            <%= form.label :secondary_color, "Color secundario", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="flex items-center space-x-2">
+              <%= form.color_field :secondary_color, 
+                                   class: "w-12 h-10 border border-gray-300 rounded cursor-pointer",
+                                   data: { theme_editor_target: "secondaryColor" } %>
+              <%= form.text_field :secondary_color, 
+                                  class: "flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "#90c695",
+                                  data: { theme_editor_target: "secondaryColorText" } %>
+            </div>
+            <%= render_field_error(@theme, :secondary_color) if @theme.errors[:secondary_color].any? %>
+          </div>
+        </div>
+
+        <!-- Modo de contraste -->
+        <div>
+          <%= form.label :contrast_mode, "Modo de contraste", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.select :contrast_mode, 
+                          options_for_select([
+                            ["Claro (texto oscuro)", "light"],
+                            ["Oscuro (texto claro)", "dark"]
+                          ], @theme.contrast_mode),
+                          {},
+                          { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                            data: { theme_editor_target: "contrastMode" } } %>
+          <%= render_field_error(@theme, :contrast_mode) if @theme.errors[:contrast_mode].any? %>
+        </div>
+
+        <!-- Plantillas de texto -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-gray-900">Mensajes</h3>
+          
+          <div>
+            <%= form.label :title_template, "Título de la invitación", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :title_template, 
+                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                placeholder: "¡Te invitamos a nuestro {title}! 🌻✌️",
+                                data: { theme_editor_target: "titleTemplate" } %>
+            <p class="text-xs text-gray-500 mt-1">Usa {title} para insertar el nombre del evento</p>
+          </div>
+
+          <div>
+            <%= form.label :subtitle_template, "Saludo personalizado", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :subtitle_template, 
+                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                placeholder: "Querida alma {name} 🌻",
+                                data: { theme_editor_target: "subtitleTemplate" } %>
+            <p class="text-xs text-gray-500 mt-1">Usa {name} para insertar el nombre del invitado</p>
+          </div>
+
+          <div>
+            <%= form.label :accept_text, "Texto de confirmación", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :accept_text, 
+                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                placeholder: "¡Sí, me uno al gathering!",
+                                data: { theme_editor_target: "acceptText" } %>
+          </div>
+
+          <div>
+            <%= form.label :decline_text, "Texto de rechazo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :decline_text, 
+                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                placeholder: "No podré ir esta vez",
+                                data: { theme_editor_target: "declineText" } %>
+          </div>
+        </div>
+
+        <!-- Emojis -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-medium text-gray-900">Emojis</h3>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <%= form.label :accept_emoji, "Emoji de confirmación", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :accept_emoji, 
+                                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "🌻",
+                                  maxlength: 10,
+                                  data: { theme_editor_target: "acceptEmoji" } %>
+            </div>
+
+            <div>
+              <%= form.label :decline_emoji, "Emoji de rechazo", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :decline_emoji, 
+                                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "🌙",
+                                  maxlength: 10,
+                                  data: { theme_editor_target: "declineEmoji" } %>
+            </div>
+
+            <div>
+              <%= form.label :date_icon, "Icono de fecha", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :date_icon, 
+                                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "⏰",
+                                  maxlength: 10,
+                                  data: { theme_editor_target: "dateIcon" } %>
+            </div>
+
+            <div>
+              <%= form.label :location_icon, "Icono de ubicación", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :location_icon, 
+                                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                  placeholder: "🌍",
+                                  maxlength: 10,
+                                  data: { theme_editor_target: "locationIcon" } %>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :header_emoji, "Emojis del encabezado", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :header_emoji, 
+                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                                placeholder: "🌻,✌️,🌸",
+                                data: { theme_editor_target: "headerEmoji" } %>
+            <p class="text-xs text-gray-500 mt-1">Separa múltiples emojis con comas</p>
+          </div>
+        </div>
+
+        <!-- Elementos flotantes (simplificado por ahora) -->
+        <div>
+          <%= form.label :floating_elements, "Elementos decorativos", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_area :floating_elements, 
+                             rows: 3,
+                             class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                             placeholder: 'Ejemplo: [{"emoji":"🌻","top":"10%","left":"5%","size":"2rem"}]',
+                             data: { theme_editor_target: "floatingElements" } %>
+          <p class="text-xs text-gray-500 mt-1">JSON con elementos decorativos (avanzado)</p>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4 pt-6 border-t">
+          <%= link_to "Cancelar", event_path(@event), 
+                      class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <%= form.submit "Guardar Tema", 
+                          class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Vista previa -->
+    <div class="bg-gray-50 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-6">Vista Previa</h2>
+      <div id="theme-preview" 
+           data-theme-editor-target="preview"
+           class="transform scale-75 origin-top-left"
+           style="width: 133.33%; height: 400px; overflow: hidden;">
+        <!-- El contenido de la vista previa se actualizará dinámicamente -->
+        <div class="preview-container" style="background: <%= @theme.background_gradient.presence || 'linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%)' %>; padding: 2rem; min-height: 100%; border-radius: 0.5rem;">
+          
+          <!-- Floating elements preview -->
+          <% @theme.floating_elements_array.each do |element| %>
+            <div class="floating-element" style="position: absolute; <%= element['top'] ? "top: #{element['top']};" : '' %><%= element['left'] ? "left: #{element['left']};" : '' %><%= element['right'] ? "right: #{element['right']};" : '' %><%= element['size'] ? "font-size: #{element['size']};" : '' %>"><%= element['emoji'] %></div>
+          <% end %>
+
+          <div class="relative z-10 max-w-md mx-auto">
+            <!-- Header preview -->
+            <div class="text-center mb-6">
+              <div class="inline-flex items-center justify-center gap-2 mb-4">
+                <% @theme.header_emojis.each_with_index do |emoji, index| %>
+                  <div class="inline-block p-3 bg-white rounded-full shadow-lg border-3" style="border-color: <%= index.even? ? @theme.primary_color : @theme.secondary_color %>;">
+                    <div class="text-2xl"><%= emoji %></div>
+                  </div>
+                <% end %>
+              </div>
+              <h1 class="text-xl font-bold mb-2" style="color: <%= @theme.background_text_color %>;">
+                <%= @theme.interpolate_template(@theme.safe_title_template, { title: @event.title }) %>
+              </h1>
+              <p class="text-sm" style="color: <%= @theme.background_text_color %>;">
+                <%= @theme.interpolate_template(@theme.safe_subtitle_template, { name: "Usuario" }) %>
+              </p>
+            </div>
+
+            <!-- Card preview -->
+            <div class="bg-white rounded-lg shadow-lg p-4 mb-4" style="background: <%= @theme.card_background %>;">
+              <h2 class="text-lg font-bold text-center mb-4" style="color: <%= @theme.background_text_color %>;">
+                <%= @event.title %>
+              </h2>
+              
+              <!-- Detail cards preview -->
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center p-2 rounded border-2" style="border-color: <%= @theme.primary_color %>; background: rgba(255,255,255,0.8);">
+                  <span class="text-lg mr-3"><%= @theme.date_icon %></span>
+                  <div>
+                    <p class="font-medium text-sm">Fecha y Hora</p>
+                    <p class="text-xs text-gray-600">Detalles del evento</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-center p-2 rounded border-2" style="border-color: <%= @theme.secondary_color %>; background: rgba(255,255,255,0.8);">
+                  <span class="text-lg mr-3"><%= @theme.location_icon %></span>
+                  <div>
+                    <p class="font-medium text-sm">Ubicación</p>
+                    <p class="text-xs text-gray-600">Lugar del evento</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Buttons preview -->
+              <div class="space-y-2">
+                <button class="w-full py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-between" 
+                        style="background: linear-gradient(135deg, <%= @theme.primary_color %> 0%, <%= @theme.secondary_color %> 100%); color: <%= @theme.text_color %>;">
+                  <span><%= @theme.accept_emoji %></span>
+                  <span><%= @theme.safe_accept_text %></span>
+                  <span>✌️</span>
+                </button>
+                
+                <button class="w-full py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-between border-2" 
+                        style="border-color: <%= @theme.primary_color %>; background: rgba(255,255,255,0.9); color: <%= @theme.background_text_color %>;">
+                  <span><%= @theme.decline_emoji %></span>
+                  <span><%= @theme.safe_decline_text %></span>
+                  <span>💔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Agregar CSS para los elementos flotantes -->
+<style>
+  .floating-element {
+    position: absolute;
+    z-index: 1;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .preview-container {
+    position: relative;
+    overflow: hidden;
+  }
+</style>

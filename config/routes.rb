@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :events do
+    resource :theme, controller: 'event_themes', only: [:show, :edit, :update]
     resources :presupuestos do
       resources :lineas, except: [ :show ]
     end

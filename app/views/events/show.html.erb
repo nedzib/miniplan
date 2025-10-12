@@ -9,6 +9,11 @@
       </div>
       
       <div class="flex space-x-3">
+        <%= link_to edit_event_theme_path(@event), 
+            class: "px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 flex items-center" do %>
+          <i class="nf nf-fa-paint_brush mr-2"></i>
+          Tema
+        <% end %>
         <%= link_to edit_event_path(@event), 
             class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center" do %>
           <i class="nf nf-fa-edit mr-2"></i>

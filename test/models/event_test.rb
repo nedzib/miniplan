@@ -13,15 +13,18 @@
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  hash_id       :string
+#  theme_id      :bigint
 #  user_id       :bigint           not null
 #
 # Indexes
 #
-#  index_events_on_hash_id  (hash_id) UNIQUE
-#  index_events_on_user_id  (user_id)
+#  index_events_on_hash_id   (hash_id) UNIQUE
+#  index_events_on_theme_id  (theme_id)
+#  index_events_on_user_id   (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (theme_id => event_themes.id)
 #  fk_rails_...  (user_id => users.id)
 #
 require "test_helper"

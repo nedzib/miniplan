@@ -1,7 +1,14 @@
+<%
+  theme = @event.current_theme
+  header_emojis = theme.header_emojis
+  title_vars = { title: @event.title, name: @invitation.name, emoji: theme.header_emoji }
+  subtitle_vars = { name: @invitation.name, emoji: header_emojis.first }
+%>
+
 <% content_for :title, "#{@event.title} - Invitación para #{@invitation.name}" %>
 <% content_for :description, "#{@invitation.name}, estás invitado(a) a #{@event.title}. #{@event.description.present? ? @event.description : 'Te esperamos en este evento especial.'}" %>
-<% content_for :og_title, "✌️ #{@event.title} - Invitación Especial" %>
-<% content_for :og_description, "#{@invitation.name}, tienes una invitación especial para #{@event.title}. #{@event.start_time ? "📅 #{format_date_spanish(@event.start_time)}" : ""} #{@event.location.present? ? "📍 #{@event.location}" : ""}" %>
+<% content_for :og_title, "#{header_emojis.first} #{@event.title} - Invitación Especial" %>
+<% content_for :og_description, "#{@invitation.name}, tienes una invitación especial para #{@event.title}. #{@event.start_time ? "#{theme.date_icon} #{format_date_spanish(@event.start_time)}" : ""} #{@event.location.present? ? "#{theme.location_icon} #{@event.location}" : ""}" %>
 <% content_for :og_image_alt, "Invitación para #{@event.title} - #{@invitation.name}" %>
 <% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
 
@@ -14,25 +21,22 @@
 
 <%= stylesheet_link_tag 'individual_rsvp', 'data-turbo-track': 'reload' %>
 
-<div class="py-6 w-full hippie-background" 
+<div class="py-6 w-full" 
+     style="<%= theme.background_gradient.present? ? "background: #{theme.background_gradient};" : "background: linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%);" %> <%= theme.generate_css_variables.map { |k, v| "#{k}: #{v};" }.join(' ') %>"
      data-controller="rsvp" 
      data-rsvp-hash-id-value="<%= @invitation.hash_id %>" 
      <% if show_countdown %>data-rsvp-deadline-value="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
-  <!-- Floating hippie elements -->
-  <div class="floating-element" style="top: 10%; left: 5%; font-size: 2rem;">🌻</div>
-  <div class="floating-element" style="top: 15%; right: 8%; font-size: 1.5rem;">✌️</div>
-  <div class="floating-element" style="top: 25%; left: 15%; font-size: 1.8rem;">🌿</div>
-  <div class="floating-element" style="top: 35%; right: 20%; font-size: 2.2rem;">☮️</div>
-  <div class="floating-element" style="top: 45%; left: 8%; font-size: 1.6rem;">🦋</div>
-  <div class="floating-element" style="top: 55%; right: 12%; font-size: 1.9rem;">🍄</div>
-  <div class="floating-element" style="top: 65%; left: 25%; font-size: 1.7rem;">🦋</div>
-  <div class="floating-element" style="top: 75%; right: 15%; font-size: 2rem;">🌸</div>
+  
+  <!-- Floating elements from theme -->
+  <% theme.floating_elements_array.each do |element| %>
+    <div class="floating-element" style="<%= element['top'] ? "top: #{element['top']};" : '' %><%= element['left'] ? "left: #{element['left']};" : '' %><%= element['right'] ? "right: #{element['right']};" : '' %><%= element['size'] ? "font-size: #{element['size']};" : '' %>"><%= element['emoji'] %></div>
+  <% end %>
   
   <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <!-- Countdown Section -->
     <% if show_countdown %>
       <div class="text-center mb-3 animate-fade-in">
-        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, #d4a574 0%, #e4a574 100%); border: 2px solid #c49a6c;">
+        <div class="inline-block px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); border: 2px solid <%= theme.primary_color %>; color: <%= theme.text_color %>;">
           <div class="flex items-center justify-center space-x-2">
             <div class="text-center flex flex-row">
               <p class="text-xs font-medium">Confirmaciones hasta:</p>
