@@ -40,7 +40,7 @@ class FamilyGroupsController < ApplicationController
   end
 
   def set_family_group
-    @family_group = @event.family_groups.find(params[:id])
+    @family_group = @event.family_groups.find_by!(hash_id: params[:id])
   end
 
   def family_group_params
