@@ -6,199 +6,55 @@
 <% content_for :og_url, rsvp_confirm_url(hash_id: @invitation.hash_id) %>
 
 <%
-  # Verificar si hay familiares pendientes
-  has_pending_family_members = @invitation.family_group && 
-                               @family_members.any? { |member| member.status == 'pending' }
-  
-  # Mostrar countdown si:
-  # 1. Hay deadline y no ha pasado, Y
-  # 2. (La invitación no está aceptada O hay familiares pendientes)
+  # Mostrar countdown si hay deadline y no ha pasado y la invitación no está aceptada
   show_countdown = @event.rsvp_deadline && 
                    !rsvp_deadline_passed?(@event) && 
-                   (@invitation.status != 'accepted' || has_pending_family_members)
+                   @invitation.status != 'accepted'
 %>
 
-<style>
-  .hippie-background {
-    background: linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%);
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
-  }
+<%= stylesheet_link_tag 'individual_rsvp', 'data-turbo-track': 'reload' %>
+
+<div class="py-6 w-full hippie-background" 
+     data-controller="rsvp" 
+     data-rsvp-hash-id-value="<%= @invitation.hash_id %>" 
+     <% if show_countdown %>data-rsvp-deadline-value="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
+  <!-- Floating hippie elements -->
+  <div class="floating-element" style="top: 10%; left: 5%; font-size: 2rem;">🌻</div>
+  <div class="floating-element" style="top: 15%; right: 8%; font-size: 1.5rem;">✌️</div>
+  <div class="floating-element" style="top: 25%; left: 15%; font-size: 1.8rem;">🌿</div>
+  <div class="floating-element" style="top: 35%; right: 20%; font-size: 2.2rem;">☮️</div>
+  <div class="floating-element" style="top: 45%; left: 8%; font-size: 1.6rem;">🦋</div>
+  <div class="floating-element" style="top: 55%; right: 12%; font-size: 1.9rem;">🍄</div>
+  <div class="floating-element" style="top: 65%; left: 25%; font-size: 1.7rem;">🦋</div>
+  <div class="floating-element" style="top: 75%; right: 15%; font-size: 2rem;">🌸</div>
   
-  .floating-element {
-    position: absolute;
-    opacity: 0.6;
-    animation: float 6s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
-  }
-  
-  .floating-element:nth-child(even) {
-    animation-delay: -3s;
-    animation-duration: 8s;
-  }
-  
-  .floating-element:nth-child(3n) {
-    animation-delay: -1s;
-    animation-duration: 7s;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(180deg); }
-  }
-  
-  .hippie-card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 2px solid #d4a574;
-    backdrop-filter: blur(10px);
-    position: relative;
-    z-index: 10;
-  }
-  
-  .hippie-card-header {
-    background: linear-gradient(135deg, #d4a574 0%, #e6c994 100%);
-    color: #5d4e37;
-    padding: 1.5rem;
-    border-radius: 18px 18px 0 0;
-    border-bottom: 3px solid #c49a6c;
-  }
-  
-  .hippie-detail-card {
-    background: rgba(255, 248, 240, 0.8);
-    border: 2px solid #e6c994;
-    border-radius: 15px;
-    padding: 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  
-  .hippie-icon-wrapper {
-    background: linear-gradient(135deg, #d4a574 0%, #e6c994 100%);
-    border-radius: 50%;
-    width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #c49a6c;
-    flex-shrink: 0;
-  }
-  
-  .hippie-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    border-radius: 25px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid;
-    cursor: pointer;
-    min-height: 3.5rem;
-    font-size: 1rem;
-  }
-  
-  .hippie-button-accept {
-    background: linear-gradient(135deg, #90c695 0%, #a8d5aa 100%);
-    border-color: #7bb77f;
-    color: #2d5016;
-  }
-  
-  .hippie-button-accept:hover {
-    background: linear-gradient(135deg, #7bb77f 0%, #90c695 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(123, 183, 127, 0.4);
-  }
-  
-  .hippie-button-decline {
-    background: linear-gradient(135deg, #e4a574 0%, #e6b894 100%);
-    border-color: #d4956a;
-    color: #8b4513;
-  }
-  
-  .hippie-button-decline:hover {
-    background: linear-gradient(135deg, #d4956a 0%, #e4a574 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(212, 149, 106, 0.4);
-  }
-  
-  .rsvp-status-indicator {
-    transition: all 0.3s ease;
-  }
-  
-  .rsvp-status-accepted {
-    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-    border-color: #90c695 !important;
-  }
-  
-  .rsvp-status-declined {
-    background: linear-gradient(135deg, #fdf2f2 0%, #fef7f7 100%);
-    border-color: #e4a574 !important;
-  }
-  
-  .rsvp-status-pending {
-    background: linear-gradient(135deg, #fef3e2 0%, #fef9f3 100%);
-    border-color: #d4a574 !important;
-  }
-  
-  .hippie-alert {
-    padding: 1rem;
-    border-radius: 15px;
-    border: 2px solid;
-    margin: 1rem 0;
-  }
-  
-  .hippie-alert-success {
-    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-    border-color: #90c695;
-    color: #2d5016;
-  }
-  
-  .hippie-alert-warning {
-    background: linear-gradient(135deg, #fef3e2 0%, #fef9f3 100%);
-    border-color: #d4a574;
-    color: #8b4513;
-  }
-  
-  .hippie-response-section {
-    padding: 2rem;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    border: 2px solid #e6c994;
-  }
-  
-  .hippie-response-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .hippie-response-success .hippie-response-icon {
-    animation: bounce 2s infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
+  <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Countdown Section -->
+    <% if show_countdown %>
+      <div class="text-center mb-3 animate-fade-in">
+        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, #d4a574 0%, #e4a574 100%); border: 2px solid #c49a6c;">
+          <div class="flex items-center justify-center space-x-2">
+            <div class="text-center flex flex-row">
+              <p class="text-xs font-medium">Confirmaciones hasta:</p>
+              <p class="text-xs mx-2 font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
+              <div id="countdown-timer" 
+                   class="text-sm font-bold" 
+                   data-rsvp-target="countdownTimer"
+                   data-deadline="<%= @event.rsvp_deadline.to_i * 1000 %>">
+                <!-- El countdown se actualizará con JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+<%
+  # Mostrar countdown si hay deadline y no ha pasado y la invitación no está aceptada
+  show_countdown = @event.rsvp_deadline && 
+                   !rsvp_deadline_passed?(@event) && 
+                   @invitation.status != 'accepted'
+%>
 
 <div class="py-6 w-full hippie-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if show_countdown %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
   <!-- Floating hippie elements -->
@@ -279,10 +135,10 @@
       <% when 'accepted' %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-accepted">
           <div class="flex items-center gap-2">
-            <span class="text-2xl animate-bounce">🐝</span>
+            <span class="text-2xl animate-bounce">🌻</span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-black);">¡Ya confirmaste tu vuelo al jardín!</p>
-              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Tu asistencia está confirmada entre flores y miel 🍯🌸</p>
+              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">¡Ya confirmaste tu asistencia al gathering!</p>
+              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Tu presencia está confirmada en armonía con el universo ✌️�</p>
             </div>
             <span class="text-xl">✅</span>
           </div>
@@ -290,10 +146,10 @@
       <% when 'declined' %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-declined">
           <div class="flex items-center gap-2">
-            <span class="text-2xl">👿</span>
+            <span class="text-2xl">🌙</span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-brown);">Has declinado la invitación</p>
-              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Esperamos verte en el futuro 💜</p>
+              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">Has declinado la invitación</p>
+              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Esperamos verte en el futuro 💜</p>
             </div>
             <span class="text-xl">💔</span>
           </div>
@@ -301,10 +157,10 @@
       <% else %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-pending">
           <div class="flex items-center gap-2">
-            <span class="text-2xl bee-icon">🍯</span>
+            <span class="text-2xl">�</span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-black);">Esperando tu confirmación</p>
-              <p class="text-xs sm:text-sm" style="color: var(--bee-black);">¿Volarás hasta nuestro jardín? 🐝💜</p>
+              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">Esperando tu confirmación</p>
+              <p class="text-xs sm:text-sm" style="color: #5d4e37;">¿Te unirás a nuestro gathering? 🌻💜</p>
             </div>
             <span class="text-xl">⏳</span>
           </div>
@@ -313,12 +169,12 @@
     </div>
 
     <!-- Tarjeta principal de invitación -->
-    <div class="bee-card">
+    <div class="hippie-card">
       <!-- Header de la tarjeta -->
-      <div class="bee-card-header text-center">
+      <div class="hippie-card-header text-center">
         <h2 class="text-2xl sm:text-3xl font-bold mb-2 px-2"><%= @event.title %></h2>
         <p class="text-base sm:text-lg px-2">
-          Querida abejita <span class="font-semibold"><%= @invitation.name %></span> 🐝
+          Querida alma <span class="font-semibold"><%= @invitation.name %></span> 🌻
         </p>
       </div>
 
@@ -327,8 +183,8 @@
         <!-- Descripción del evento -->
         <% if @event.description.present? %>
           <div class="mb-6 sm:mb-8 text-center">
-            <p class="text-base sm:text-lg leading-relaxed px-2" style="color: var(--bee-brown);"><%= @event.description %></p>
-            <div class="text-xl sm:text-2xl mt-2">🌸 🐝 💜 🐝 🌸</div>
+            <p class="text-base sm:text-lg leading-relaxed px-2" style="color: #5d4e37;"><%= @event.description %></p>
+            <div class="text-xl sm:text-2xl mt-2">� ✌️ 🌿 ☮️ 🦋</div>
           </div>
         <% end %>
 
@@ -337,7 +193,7 @@
           <!-- Fecha y Hora -->
           <%= render DetailCardComponent.new(
                 icon: "⏰",
-                title: "Fecha y Hora del evento",
+                title: "Fecha y Hora del gathering",
                 body: capture do %>
                   <p><%= format_date_spanish(@event.start_time) if @event.start_time %></p>
                   <p>
@@ -347,18 +203,18 @@
                     <% end %>
                   </p>
                 <% end,
-                theme: 'bee'
+                theme: 'hippie'
               ) %>
 
           <!-- Ubicación -->
           <% if @event.location.present? %>
             <%= render DetailCardComponent.new(
                   icon: "🌍",
-                  title: "Ubicación del Jardín",
+                  title: "Lugar del encuentro",
                   body: @event.location,
                   url: @event.map_url.present? ? @event.map_url : nil,
                   button_title: @event.map_url.present? ? "Ver en mapa" : nil,
-                  theme: 'bee'
+                  theme: 'hippie'
                 ) %>
           <% end %>
 
@@ -366,93 +222,23 @@
           <%= render DetailCardComponent.new(
                 icon: "🎁",
                 title: "Lista de Regalos",
-                body: "¡Evita duplicados registrando tu regalo!",
+                body: "¡Registra tu regalo para evitar duplicados en la tribu!",
                 url: public_gifts_path(@event.hash_id),
                 button_title: "Ver Lista",
-                theme: 'bee'
+                theme: 'hippie'
               ) %>
         </div>
 
-        <!-- Sección de Grupo Familiar -->
-        <% if @invitation.family_group && @family_members.any? %>
-          <div class="mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #E8F5E8 0%, #F0FFF0 100%); border-color: var(--bee-yellow);">
-            <div class="text-center mb-4">
-              <div class="text-2xl mb-2">👨‍👩‍👧‍👦</div>
-              <h3 class="text-lg sm:text-xl font-semibold mb-2" style="color: var(--bee-black);">
-                Grupo Familiar: <%= @invitation.family_group.name %>
-              </h3>
-              <p class="text-sm sm:text-base" style="color: var(--bee-brown);">
-                ¡También puedes confirmar la asistencia de otros miembros de tu grupo familiar al jardín! 🐝🌸
-              </p>
-            </div>
-            
-            <div data-rsvp-target="familyMembersSection" class="space-y-3">
-              <% @family_members.each do |member| %>
-                <div class="flex items-center justify-between p-3 rounded-lg border-2 border-yellow-200 bg-white bg-opacity-60">
-                  <div class="flex items-center flex-1">
-                    <div class="mr-3">
-                      <% if member.status == 'accepted' %>
-                        <span class="text-lg">✅</span>
-                      <% elsif member.status == 'declined' %>
-                        <span class="text-lg">❌</span>
-                      <% else %>
-                        <span class="text-lg">⏳</span>
-                      <% end %>
-                    </div>
-                    <div class="flex-1">
-                      <p class="font-medium text-sm sm:text-base" style="color: var(--bee-black);"><%= member.name %></p>
-                      <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">
-                        Estado actual: 
-                        <span class="font-medium">
-                          <%= member.status == 'accepted' ? 'Confirmado' : (member.status == 'declined' ? 'Declinado' : 'Pendiente') %>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <% if member.hash_id.present? %>
-                      <button 
-                        type="button"
-                        onclick="copyInvitationLink('<%= rsvp_confirm_url(hash_id: member.hash_id) %>', '<%= member.name %>')"
-                        class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors duration-200 flex items-center gap-1"
-                        title="Copiar link de invitación de <%= member.name %>">
-                        <span class="text-xs">🔗</span>
-                        <span class="hidden sm:inline text-xs">Copiar Link</span>
-                      </button>
-                    <% end %>
-                    <label class="flex items-center cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        name="family_members[<%= member.id %>]" 
-                        value="1"
-                        data-rsvp-target="familyMemberCheckbox"
-                        class="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500 focus:ring-2"
-                      >
-                      <span class="ml-2 text-xs sm:text-sm font-medium" style="color: var(--bee-brown);">Incluir</span>
-                    </label>
-                  </div>
-                </div>
-              <% end %>
-              
-              <div class="text-center pt-2">
-                <p class="text-xs text-gray-600">
-                  💡 Marca las casillas de los familiares que quieres confirmar junto contigo
-                </p>
-              </div>
-            </div>
-          </div>
-        <% end %>
-
         <!-- Mensaje personalizado -->
-        <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); border-color: #9f7aea;">
-          <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: var(--bee-black);">
-            Tu presencia es tan valiosa como el néctar de las flores lilas
+        <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%); border-color: #d4a574;">
+          <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: #8b4513;">
+            Tu presencia es tan valiosa como una flor en el jardín de la vida
           </h3>
-          <p class="text-sm sm:text-base px-2" style="color: var(--bee-brown);">
-            Esperamos que vueles hasta nosotros para compartir este momento especial entre pétalos lilas y miel dorada, <%= @invitation.name %>. 
-            Por favor confirma tu asistencia para que podamos preparar el jardín perfectamente. 🍯🌸
+          <p class="text-sm sm:text-base px-2" style="color: #5d4e37;">
+            Esperamos que puedas unirte a nuestro gathering especial, <%= @invitation.name %>. 
+            Por favor confirma tu asistencia para que podamos preparar el espacio en armonía perfecta. �✌️
           </p>
-          <div class="text-xl sm:text-2xl mt-3">🌸 🐝 💜 🐝 🌸</div>
+          <div class="text-xl sm:text-2xl mt-3">� ✌️ 🌿 ☮️ 🦋</div>
         </div>
 
         <!-- Botones de confirmación -->
@@ -462,18 +248,18 @@
               <button 
                 data-action="click->rsvp#accept"
                 data-rsvp-target="acceptButton"
-                class="bee-button bee-button-accept">
-                <span class="bee-icon text-lg">🌸</span>
-                <span class="flex-1">¡Sí, volaré al jardín!</span>
-                <span class="bee-icon text-lg">🐝</span>
+                class="hippie-button hippie-button-accept">
+                <span class="text-lg">�</span>
+                <span class="flex-1">¡Sí, me uno al gathering!</span>
+                <span class="text-lg">✌️</span>
               </button>
               
               <button 
                 data-action="click->rsvp#decline"
                 data-rsvp-target="declineButton"
-                class="bee-button bee-button-decline">
-                <span class="text-lg">👿</span>
-                <span class="flex-1">No podré volar esta vez</span>
+                class="hippie-button hippie-button-decline">
+                <span class="text-lg">🌙</span>
+                <span class="flex-1">No podré ir esta vez</span>
                 <span class="text-lg">💔</span>
               </button>
             </div>
@@ -503,159 +289,16 @@
       </div>
     </div>
 
-    <!-- Enlace a Lista de Regalos -->
-    <div class="text-center my-6 sm:my-8">
-      <%= link_to public_gifts_path(@event.hash_id), 
-          class: "inline-block px-6 py-4 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white font-semibold text-lg",
-          style: "background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffadd1 100%); text-decoration: none;",
-          target: "_blank" do %>
-        <div class="flex items-center justify-center gap-3">
-          <span class="text-2xl">🎁</span>
-          <span>Ver Lista de Regalos</span>
-          <span class="text-2xl">💝</span>
-        </div>
-        <div class="text-sm opacity-90 mt-1">
-          ¡Registra tu regalo para evitar duplicados! ✨
-        </div>
-      <% end %>
-    </div>
-
     <!-- Footer -->
-    <div class="text-center px-4 pb-4" style="color: var(--bee-brown);">
+    <div class="text-center px-4 pb-4" style="color: #5d4e37;">
       <p class="text-xs sm:text-sm">
-        Si tienes alguna pregunta, no dudes en zumbar hasta nosotros. 🐝💜
+        Si tienes alguna pregunta, fluye hasta nosotros con amor y paz. 🌻✌️
       </p>
       <p class="text-xs mt-2">
-        Miniplan • Creando momentos dulces como la miel entre pétalos lilas 🍯🌸
+        Miniplan • Creando momentos en armonía como las flores en primavera �
       </p>
     </div>
   </div>
 </div>
 
-<!-- Script para copiar links -->
-<script>
-function copyInvitationLink(url, memberName) {
-  navigator.clipboard.writeText(url).then(function() {
-    showNotification(`Link de ${memberName} copiado al portapapeles 🐝`, 'success');
-  }).catch(function(err) {
-    // Fallback para navegadores que no soportan clipboard API
-    fallbackCopyToClipboard(url);
-    showNotification(`Link de ${memberName} copiado 🐝`, 'success');
-  });
-}
 
-function fallbackCopyToClipboard(text) {
-  const textArea = document.createElement('textarea');
-  textArea.value = text;
-  document.body.appendChild(textArea);
-  textArea.select();
-  document.execCommand('copy');
-  document.body.removeChild(textArea);
-}
-
-function showNotification(message, type = 'success') {
-  const notification = document.createElement('div');
-  
-  // Usar estilos inline para asegurar que se vean correctamente
-  if (type === 'success') {
-    notification.style.cssText = `
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background-color: #10b981;
-      color: white;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      max-width: 20rem;
-      font-size: 0.875rem;
-      border: 2px solid #059669;
-    `;
-  } else {
-    notification.style.cssText = `
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background-color: #ef4444;
-      color: white;
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      max-width: 20rem;
-      font-size: 0.875rem;
-      border: 2px solid #dc2626;
-    `;
-  }
-  
-  const icon = type === 'success' ? '✅' : '❌';
-  notification.innerHTML = `
-    <span style="font-size: 1.125rem;">${icon}</span>
-    <span>${message}</span>
-  `;
-  
-  document.body.appendChild(notification);
-  
-  // Remover notificación después de 4 segundos
-  setTimeout(() => {
-    notification.remove();
-  }, 4000);
-}
-
-// Countdown Timer
-document.addEventListener('DOMContentLoaded', function() {
-  const countdownElement = document.getElementById('countdown-timer');
-  if (countdownElement) {
-    const deadline = parseInt(countdownElement.dataset.deadline);
-    
-    function updateCountdown() {
-      const now = Date.now();
-      const timeLeft = deadline - now;
-      
-      if (timeLeft <= 0) {
-        countdownElement.innerHTML = '⏰ ¡Tiempo agotado!';
-        // Opcional: recargar la página para mostrar el estado "cerrado"
-        setTimeout(() => {
-          location.reload();
-        }, 2000);
-        return;
-      }
-      
-      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      
-      let countdownText = '';
-      
-      if (days > 0) {
-        countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-      } else if (hours > 0) {
-        countdownText = `${hours}h ${minutes}m ${seconds}s`;
-      } else if (minutes > 0) {
-        countdownText = `${minutes}m ${seconds}s`;
-      } else {
-        countdownText = `${seconds}s`;
-      }
-      
-      countdownElement.innerHTML = `⏰ ${countdownText}`;
-    }
-    
-    // Actualizar inmediatamente y luego cada segundo
-    updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
-    
-    // Limpiar el intervalo cuando se desmonte la página
-    window.addEventListener('beforeunload', () => {
-      clearInterval(countdownInterval);
-    });
-  }
-});
-</script>

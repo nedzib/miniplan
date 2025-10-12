@@ -2,18 +2,69 @@ import { Controller } from "@hotwired/stimulus"
 import confetti from "canvas-confetti"
 
 export default class extends Controller {
-  static targets = ["acceptButton", "declineButton", "confirmationSection", "responseSection", "statusIndicator", "familyMembersSection", "familyMemberCheckbox"]
-  static values = { hashId: String }
+  static targets = ["acceptButton", "declineButton", "confirmationSection", "responseSection", "statusIndicator", "countdownTimer"]
+  static values = { hashId: String, deadline: Number }
 
   connect() {
     console.log("RSVP controller connected")
+    this.initializeCountdown()
+  }
+
+  disconnect() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval)
+    }
+  }
+
+  initializeCountdown() {
+    if (this.hasDeadlineValue && this.hasCountdownTimerTarget) {
+      this.updateCountdown()
+      this.countdownInterval = setInterval(() => {
+        this.updateCountdown()
+      }, 1000)
+    }
+  }
+
+  updateCountdown() {
+    const now = Date.now()
+    const timeLeft = this.deadlineValue - now
+    
+    if (timeLeft <= 0) {
+      this.countdownTimerTarget.innerHTML = '⏰ ¡Tiempo agotado!'
+      if (this.countdownInterval) {
+        clearInterval(this.countdownInterval)
+      }
+      // Opcional: recargar la página para mostrar el estado "cerrado"
+      setTimeout(() => {
+        location.reload()
+      }, 2000)
+      return
+    }
+    
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
+    
+    let countdownText = ''
+    
+    if (days > 0) {
+      countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`
+    } else if (hours > 0) {
+      countdownText = `${hours}h ${minutes}m ${seconds}s`
+    } else if (minutes > 0) {
+      countdownText = `${minutes}m ${seconds}s`
+    } else {
+      countdownText = `${seconds}s`
+    }
+    
+    this.countdownTimerTarget.innerHTML = `⏰ ${countdownText}`
   }
 
   async accept(event) {
     event.preventDefault()
     const response = await this.updateRSVP('accepted')
     if (response && response.success) {
-      this.updateFamilyMembersStatus('accepted')
       await this.showConfirmation('accepted')
       this.updateStatusIndicator('accepted')
       this.launchConfetti()
@@ -24,7 +75,6 @@ export default class extends Controller {
     event.preventDefault()
     const response = await this.updateRSVP('declined')
     if (response && response.success) {
-      this.updateFamilyMembersStatus('declined')
       await this.showConfirmation('declined')
       this.updateStatusIndicator('declined')
     }
@@ -32,21 +82,9 @@ export default class extends Controller {
 
   async updateRSVP(status) {
     try {
-      // Recopilar datos de miembros del grupo familiar
-      const familyMemberData = {}
-      if (this.hasFamilyMemberCheckboxTarget) {
-        this.familyMemberCheckboxTargets.forEach(checkbox => {
-          if (checkbox.checked) {
-            const memberId = checkbox.name.match(/\[(\d+)\]/)[1]
-            familyMemberData[memberId] = "1"
-          }
-        })
-      }
-
       const requestBody = { 
         status: status, 
-        hash_id: this.hashIdValue,
-        family_members: familyMemberData
+        hash_id: this.hashIdValue
       }
 
       const response = await fetch(`/invitations/${this.hashIdValue}/rsvp`, {
@@ -90,22 +128,22 @@ export default class extends Controller {
   }
 
   launchConfetti() {
-    // Bee-themed confetti with golden colors
+    // Hippie-themed confetti with earthy colors
     confetti({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#FFD700', '#FFA500', '#FFFF00', '#FF8C00', '#DAA520']
+      colors: ['#90c695', '#d4a574', '#e6c994', '#c49a6c', '#7bb77f']
     })
 
-    // Additional bee confetti bursts
+    // Additional flower confetti bursts
     setTimeout(() => {
       confetti({
         particleCount: 50,
         angle: 60,
         spread: 55,
         origin: { x: 0 },
-        colors: ['#FFD700', '#FFA500', '#FFBF00']
+        colors: ['#90c695', '#d4a574', '#e6c994']
       })
     }, 250)
 
@@ -115,18 +153,18 @@ export default class extends Controller {
         angle: 120,
         spread: 55,
         origin: { x: 1 },
-        colors: ['#FFD700', '#FFA500', '#FFBF00']
+        colors: ['#90c695', '#d4a574', '#e6c994']
       })
     }, 400)
 
-    // Special honey drip effect
+    // Special flower rain effect
     setTimeout(() => {
       confetti({
         particleCount: 30,
         spread: 360,
         ticks: 60,
         origin: { y: 0.3 },
-        colors: ['#FFD700', '#FFBF00'],
+        colors: ['#90c695', '#d4a574'],
         shapes: ['circle'],
         scalar: 0.8
       })
@@ -142,10 +180,10 @@ export default class extends Controller {
       statusIndicator.innerHTML = `
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-accepted">
           <div class="flex items-center gap-2">
-            <span class="text-2xl animate-bounce">🐝</span>
+            <span class="text-2xl animate-bounce">🌻</span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-black);">¡Ya confirmaste tu vuelo al panal!</p>
-              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Tu asistencia está confirmada 🍯</p>
+              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">¡Ya confirmaste tu asistencia al gathering!</p>
+              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Tu presencia está confirmada en armonía ✌️</p>
             </div>
             <span class="text-xl">✅</span>
           </div>
@@ -155,10 +193,10 @@ export default class extends Controller {
       statusIndicator.innerHTML = `
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-declined">
           <div class="flex items-center gap-2">
-            <span class="text-2xl">🍯</span>
+            <span class="text-2xl">�</span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: var(--bee-brown);">Has declinado la invitación</p>
-              <p class="text-xs sm:text-sm" style="color: var(--bee-brown);">Esperamos verte en la próxima floración</p>
+              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">Has declinado la invitación</p>
+              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Esperamos verte en el futuro 💜</p>
             </div>
             <span class="text-xl">💔</span>
           </div>
@@ -167,92 +205,39 @@ export default class extends Controller {
     }
   }
 
-  updateFamilyMembersStatus(status) {
-    if (!this.hasFamilyMemberCheckboxTarget) return
-
-    // Actualizar el estado visual de los miembros familiares que fueron marcados
-    this.familyMemberCheckboxTargets.forEach(checkbox => {
-      if (checkbox.checked) {
-        const memberRow = checkbox.closest('div[class*="flex items-center justify-between"]')
-        if (memberRow) {
-          const statusIcon = memberRow.querySelector('div.mr-3 span')
-          const statusTextElement = memberRow.querySelector('span.font-medium')
-          
-          if (statusIcon && statusTextElement) {
-            if (status === 'accepted') {
-              statusIcon.textContent = '✅'
-              statusTextElement.textContent = 'Confirmado'
-            } else if (status === 'declined') {
-              statusIcon.textContent = '❌'
-              statusTextElement.textContent = 'Declinado'
-            }
-          }
-          
-          // Desmarcar el checkbox y deshabilitarlo temporalmente
-          checkbox.checked = false
-          checkbox.disabled = true
-          
-          // Agregar feedback visual
-          const label = checkbox.nextElementSibling
-          if (label) {
-            const originalText = label.textContent
-            label.textContent = status === 'accepted' ? '✓ Confirmado' : '✗ Actualizado'
-            label.style.color = status === 'accepted' ? 'green' : 'red'
-            
-            setTimeout(() => {
-              checkbox.disabled = false
-              label.textContent = originalText
-              label.style.color = ''
-            }, 3000)
-          }
-        }
-      }
-    })
-  }
-
-  // Fallback templates in case partial loading fails
+  // Fallback templates with hippie theme
   getAcceptedTemplate() {
-    // Contar miembros familiares confirmados
-    const confirmedFamilyMembers = this.hasFamilyMemberCheckboxTarget ? 
-      this.familyMemberCheckboxTargets.filter(checkbox => checkbox.checked).length : 0
-    
-    const familyMessage = confirmedFamilyMembers > 0 ? 
-      `<p class="text-sm mb-2" style="color: var(--bee-brown);">
-         También confirmaste a ${confirmedFamilyMembers} miembro(s) de tu grupo familiar 👨‍👩‍👧‍👦
-       </p>` : ""
-
     return `
-      <div class="bee-response-section">
+      <div class="hippie-response-section">
         <div class="animate-bounce mb-4 sm:mb-6">
-          <div class="bee-response-icon bee-response-success">🐝</div>
+          <div class="hippie-response-icon hippie-response-success">🌻</div>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 px-2" style="color: var(--bee-black);">¡Buzz Buzz! ¡Confirmado! 🍯</h2>
-        <p class="text-base sm:text-lg mb-4 sm:mb-6 px-4" style="color: var(--bee-brown);">
-          ¡Excelente! Como una abeja a la miel, esperamos verte en nuestro panal especial.
+        <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 px-2" style="color: #8b4513;">¡Peace & Love! ¡Confirmado! ✌️</h2>
+        <p class="text-base sm:text-lg mb-4 sm:mb-6 px-4" style="color: #5d4e37;">
+          ¡Excelente! Tu alma fluirá en armonía con nuestro gathering especial.
         </p>
-        ${familyMessage}
-        <div class="bee-alert bee-alert-success mx-2 sm:mx-0">
-          <p class="text-sm sm:text-base">Te enviaremos más detalles dulces como la miel por correo electrónico pronto. 🌻</p>
+        <div class="hippie-alert hippie-alert-success mx-2 sm:mx-0">
+          <p class="text-sm sm:text-base">Te enviaremos más detalles cósmicos por correo electrónico pronto. 🌻</p>
         </div>
-        <div class="text-xl sm:text-2xl mt-3 sm:mt-4">🐝 🌼 🍯 🌻 🐝</div>
+        <div class="text-xl sm:text-2xl mt-3 sm:mt-4">🌻 ✌️ � ☮️ 🦋</div>
       </div>
     `
   }
 
   getDeclinedTemplate() {
     return `
-      <div class="bee-response-section">
+      <div class="hippie-response-section">
         <div class="mb-4 sm:mb-6">
-          <div class="bee-response-icon bee-response-declined">🍯</div>
+          <div class="hippie-response-icon hippie-response-declined">�</div>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 px-2" style="color: var(--bee-brown);">Respuesta Registrada en el Panal</h2>
-        <p class="text-base sm:text-lg mb-4 sm:mb-6 px-4" style="color: var(--bee-brown);">
-          Lamentamos que no puedas volar hasta nuestro evento.
+        <h2 class="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 px-2" style="color: #8b4513;">Respuesta Registrada en el Universo</h2>
+        <p class="text-base sm:text-lg mb-4 sm:mb-6 px-4" style="color: #5d4e37;">
+          Lamentamos que no puedas fluir hasta nuestro gathering.
         </p>
-        <div class="bee-alert bee-alert-warning mx-2 sm:mx-0">
-          <p class="text-sm sm:text-base">¡Esperamos verte en la próxima floración! Siempre habrá un lugar en nuestro panal para ti. 🌻</p>
+        <div class="hippie-alert hippie-alert-warning mx-2 sm:mx-0">
+          <p class="text-sm sm:text-base">¡Esperamos verte en la próxima vibración! Siempre habrá un lugar en nuestro círculo de amor para ti. 🌻</p>
         </div>
-        <div class="text-xl sm:text-2xl mt-3 sm:mt-4">🐝 💔 🌼</div>
+        <div class="text-xl sm:text-2xl mt-3 sm:mt-4">🌻 💔 ✌️</div>
       </div>
     `
   }
