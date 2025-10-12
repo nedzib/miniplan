@@ -1,0 +1,23 @@
+<div class="<%= card_class %>">
+  <div class="<%= icon_wrapper_class %>">
+    <div class="<%= icon_class %>"><%= icon %></div>
+  </div>
+  <div class="min-w-0 flex-1">
+    <h3 class="font-semibold text-sm sm:text-base" style="<%= title_style %>"><%= title %></h3>
+    <div class="text-sm sm:text-base break-words mb-3" style="<%= content_style %>">
+      <%= body %>
+    </div>
+    <% if show_button? %>
+      <div class="mt-3">
+        <%= link_to url, 
+            target: "_blank", 
+            rel: "noopener noreferrer",
+            class: "inline-flex items-center gap-2 px-4 py-2 font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
+            style: button_style do %>
+          <span class="text-sm"><%= icon %></span>
+          <span><%= button_title %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

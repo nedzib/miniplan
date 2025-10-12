@@ -335,69 +335,42 @@
         <!-- Detalles del evento -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <!-- Fecha y Hora -->
-          <div class="bee-detail-card">
-            <div class="bee-icon-wrapper flex-shrink-0">
-              <div class="bee-icon text-lg sm:text-xl">⏰</div>
-            </div>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Fecha y Hora del evento</h3>
-              <p class="text-sm sm:text-base break-words" style="color: var(--bee-brown);">
-                <%= format_date_spanish(@event.start_time) if @event.start_time %>
-              </p>
-              <p class="text-sm sm:text-base" style="color: var(--bee-brown);">
-                <%= format_time_spanish(@event.start_time) if @event.start_time %>
-                <% if @event.end_time %>
-                  - <%= format_time_spanish(@event.end_time) %>
-                <% end %>
-              </p>
-            </div>
-          </div>
+          <%= render DetailCardComponent.new(
+                icon: "⏰",
+                title: "Fecha y Hora del evento",
+                body: capture do %>
+                  <p><%= format_date_spanish(@event.start_time) if @event.start_time %></p>
+                  <p>
+                    <%= format_time_spanish(@event.start_time) if @event.start_time %>
+                    <% if @event.end_time %>
+                      - <%= format_time_spanish(@event.end_time) %>
+                    <% end %>
+                  </p>
+                <% end,
+                theme: 'bee'
+              ) %>
 
           <!-- Ubicación -->
           <% if @event.location.present? %>
-            <div class="bee-detail-card">
-              <div class="bee-icon-wrapper flex-shrink-0">
-                <div class="bee-icon text-lg sm:text-xl">🌍</div>
-              </div>
-              <div class="min-w-0 flex-1">
-                <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Ubicación del Jardín</h3>
-                <p class="text-sm sm:text-base break-words mb-3" style="color: var(--bee-brown);"><%= @event.location %></p>
-                <% if @event.map_url.present? %>
-                  <div class="mt-3">
-                    <%= link_to @event.map_url, 
-                        target: "_blank", 
-                        rel: "noopener noreferrer",
-                        class: "inline-flex items-center gap-2 px-4 py-2 text-black font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
-                        style: "background: linear-gradient(135deg, #9f7aea 0%, #e9d5ff 100%); border: 2px solid #8b5cf6;" do %>
-                      <span class="text-sm">🗺️</span>
-                      <span>Ver en mapa</span>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
+            <%= render DetailCardComponent.new(
+                  icon: "🌍",
+                  title: "Ubicación del Jardín",
+                  body: @event.location,
+                  url: @event.map_url.present? ? @event.map_url : nil,
+                  button_title: @event.map_url.present? ? "Ver en mapa" : nil,
+                  theme: 'bee'
+                ) %>
           <% end %>
 
           <!-- Lista de Regalos -->
-          <div class="bee-detail-card">
-            <div class="bee-icon-wrapper flex-shrink-0">
-              <div class="bee-icon text-lg sm:text-xl">🎁</div>
-            </div>
-            <div class="min-w-0 flex-1">
-              <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Lista de Regalos</h3>
-              <p class="text-sm sm:text-base break-words mb-3" style="color: var(--bee-brown);">¡Evita duplicados registrando tu regalo!</p>
-              <div class="mt-3">
-                <%= link_to public_gifts_path(@event.hash_id), 
-                    target: "_blank", 
-                    rel: "noopener noreferrer",
-                    class: "inline-flex items-center gap-2 px-4 py-2 text-white font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
-                    style: "background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); border: 2px solid #ff5252;" do %>
-                  <span class="text-sm">🎁</span>
-                  <span>Ver Lista</span>
-                <% end %>
-              </div>
-            </div>
-          </div>
+          <%= render DetailCardComponent.new(
+                icon: "🎁",
+                title: "Lista de Regalos",
+                body: "¡Evita duplicados registrando tu regalo!",
+                url: public_gifts_path(@event.hash_id),
+                button_title: "Ver Lista",
+                theme: 'bee'
+              ) %>
         </div>
 
         <!-- Sección de Grupo Familiar -->
