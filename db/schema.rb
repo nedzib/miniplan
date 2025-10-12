@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_12_183321) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_12_203214) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,6 +25,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_183321) do
     t.datetime "updated_at", null: false
     t.datetime "rsvp_deadline"
     t.string "map_url"
+    t.string "hash_id"
+    t.index ["hash_id"], name: "index_events_on_hash_id", unique: true
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -36,6 +38,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_183321) do
     t.string "hash_id"
     t.index ["event_id"], name: "index_family_groups_on_event_id"
     t.index ["hash_id"], name: "index_family_groups_on_hash_id", unique: true
+  end
+
+  create_table "gifts", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "purchased_by"
+    t.bigint "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_gifts_on_event_id"
   end
 
   create_table "invitations", force: :cascade do |t|
@@ -234,6 +246,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_12_183321) do
 
   add_foreign_key "events", "users"
   add_foreign_key "family_groups", "events"
+  add_foreign_key "gifts", "events"
   add_foreign_key "invitations", "events"
   add_foreign_key "invitations", "family_groups"
   add_foreign_key "lineas", "presupuestos"

@@ -12,10 +12,12 @@
 #  title         :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  hash_id       :string
 #  user_id       :bigint           not null
 #
 # Indexes
 #
+#  index_events_on_hash_id  (hash_id) UNIQUE
 #  index_events_on_user_id  (user_id)
 #
 # Foreign Keys
@@ -27,12 +29,17 @@ class Event < ApplicationRecord
   has_many :invitations, dependent: :destroy
   has_many :family_groups, dependent: :destroy
   has_many :presupuestos, dependent: :destroy
+  has_many :gifts, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 255 }
   validates :description, length: { maximum: 1000 }
   validates :location, length: { maximum: 255 }
   validates :map_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, allow_blank: true
   validates :start_time, presence: true
+  validates :hash_id, presence: true, uniqueness: true
+
+  before_validation :generate_hash_id, if: -> { hash_id.blank? }
+
   validate :end_time_after_start_time, if: -> { start_time.present? && end_time.present? }
   validate :rsvp_deadline_before_start_time, if: -> { rsvp_deadline.present? && start_time.present? }
 
@@ -50,7 +57,18 @@ class Event < ApplicationRecord
     Time.current <= rsvp_deadline
   end
 
+  def to_param
+    hash_id
+  end
+
   private
+
+  def generate_hash_id
+    loop do
+      self.hash_id = SecureRandom.hex(16)
+      break unless Event.exists?(hash_id: hash_id)
+    end
+  end
 
   def end_time_after_start_time
     return unless end_time && start_time

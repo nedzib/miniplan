@@ -12,10 +12,12 @@
 #  title         :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  hash_id       :string
 #  user_id       :bigint           not null
 #
 # Indexes
 #
+#  index_events_on_hash_id  (hash_id) UNIQUE
 #  index_events_on_user_id  (user_id)
 #
 # Foreign Keys

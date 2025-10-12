@@ -246,6 +246,25 @@
                 <i class="nf nf-fa-envelope mr-2"></i>
                 View All Invitations
               <% end %>
+              
+              <%= link_to event_family_groups_path(@event), 
+                  class: "w-full px-4 py-2 text-center bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors duration-200 flex items-center justify-center" do %>
+                <i class="nf nf-fa-users mr-2"></i>
+                Family Groups
+              <% end %>
+              
+              <%= link_to event_gifts_path(@event), 
+                  class: "w-full px-4 py-2 text-center bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors duration-200 flex items-center justify-center" do %>
+                🎁
+                <span class="ml-2">Admin Regalos</span>
+              <% end %>
+              
+              <%= link_to public_gifts_path(@event.hash_id), 
+                  class: "w-full px-4 py-2 text-center bg-pink-100 text-pink-700 rounded-lg hover:bg-pink-200 transition-colors duration-200 flex items-center justify-center",
+                  target: "_blank" do %>
+                🔗
+                <span class="ml-2">Lista Pública</span>
+              <% end %>
             </div>
           </div>
         </div>

@@ -39,7 +39,12 @@ class LineasController < ApplicationController
   private
 
   def set_event_and_presupuesto
-    @event = Event.find(params[:event_id])
+    # Si el parámetro parece ser un hash_id, buscar por hash_id
+    if params[:event_id].match?(/\A[a-f0-9]{32}\z/)
+      @event = Event.find_by!(hash_id: params[:event_id])
+    else
+      @event = Event.find(params[:event_id])
+    end
     @presupuesto = @event.presupuestos.find(params[:presupuesto_id])
   end
 

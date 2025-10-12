@@ -1,4 +1,6 @@
 class EventsController < ApplicationController
+  include EventFinder
+
   before_action :set_user
   before_action :set_event, only: [ :show, :edit, :update, :destroy ]
 
@@ -46,7 +48,10 @@ class EventsController < ApplicationController
   end
 
   def set_event
-    @event = @user.events.find(params[:id])
+    event = find_event_by_param(params[:id])
+    # Asegurar que el evento pertenece al usuario actual
+    @event = @user.events.find_by!(hash_id: event.hash_id) if event.hash_id
+    @event ||= @user.events.find(event.id) if event.id
   end
 
   def event_params

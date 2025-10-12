@@ -5,6 +5,38 @@
 <% content_for :og_image_alt, "Confirmación familiar para #{@event.title} - #{@family_group.name}" %>
 <% content_for :og_url, rsvp_family_confirm_url(hash_id: @family_group.hash_id) %>
 
+<style>
+  .hippie-background {
+    background: linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  .floating-element {
+    position: absolute;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .floating-element:nth-child(even) {
+    animation-delay: -3s;
+    animation-duration: 8s;
+  }
+  
+  .floating-element:nth-child(3n) {
+    animation-delay: -1s;
+    animation-duration: 7s;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+</style>
+
 <%
   # Verificar si hay invitaciones pendientes
   has_pending_invitations = @invitations.any? { |invitation| invitation.status == 'pending' }
