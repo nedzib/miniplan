@@ -333,7 +333,7 @@
         <% end %>
 
         <!-- Detalles del evento -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <!-- Fecha y Hora -->
           <div class="bee-detail-card">
             <div class="bee-icon-wrapper flex-shrink-0">
@@ -377,6 +377,27 @@
               </div>
             </div>
           <% end %>
+
+          <!-- Lista de Regalos -->
+          <div class="bee-detail-card">
+            <div class="bee-icon-wrapper flex-shrink-0">
+              <div class="bee-icon text-lg sm:text-xl">🎁</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-semibold text-sm sm:text-base" style="color: var(--bee-black);">Lista de Regalos</h3>
+              <p class="text-sm sm:text-base break-words mb-3" style="color: var(--bee-brown);">¡Evita duplicados registrando tu regalo!</p>
+              <div class="mt-3">
+                <%= link_to public_gifts_path(@event.hash_id), 
+                    target: "_blank", 
+                    rel: "noopener noreferrer",
+                    class: "inline-flex items-center gap-2 px-4 py-2 text-white font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
+                    style: "background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); border: 2px solid #ff5252;" do %>
+                  <span class="text-sm">🎁</span>
+                  <span>Ver Lista</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Sección de Grupo Familiar -->

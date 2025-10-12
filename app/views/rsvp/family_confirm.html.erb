@@ -35,6 +35,28 @@
     0%, 100% { transform: translateY(0px) rotate(0deg); }
     50% { transform: translateY(-20px) rotate(180deg); }
   }
+  
+  .hippie-detail-card {
+    background: rgba(255, 248, 240, 0.8);
+    border: 2px solid #e6c994;
+    border-radius: 15px;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .hippie-icon-wrapper {
+    background: linear-gradient(135deg, #d4a574 0%, #e6c994 100%);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #c49a6c;
+    flex-shrink: 0;
+  }
 </style>
 
 <%
@@ -140,7 +162,7 @@
         <% end %>
 
         <!-- Detalles del evento -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <!-- Fecha y Hora -->
           <div class="hippie-detail-card">
             <div class="hippie-icon-wrapper">
@@ -184,6 +206,27 @@
               </div>
             </div>
           <% end %>
+
+          <!-- Lista de Regalos -->
+          <div class="hippie-detail-card">
+            <div class="hippie-icon-wrapper">
+              <div class="text-lg sm:text-xl">🎁</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-semibold text-sm sm:text-base" style="color: #8b4513;">Lista de Regalos</h3>
+              <p class="text-sm sm:text-base break-words mb-3" style="color: #5d4e37;">¡Registra tu regalo para evitar duplicados en la tribu!</p>
+              <div class="mt-3">
+                <%= link_to public_gifts_path(@event.hash_id), 
+                    target: "_blank", 
+                    rel: "noopener noreferrer",
+                    class: "inline-flex items-center gap-2 px-4 py-2 text-white font-medium text-sm rounded-lg hover:opacity-90 transition-opacity duration-200 shadow-sm",
+                    style: "background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); border: 2px solid #ff5252;" do %>
+                  <span class="text-sm">🎁</span>
+                  <span>Ver Lista</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Sección de Miembros del Grupo Familiar -->
