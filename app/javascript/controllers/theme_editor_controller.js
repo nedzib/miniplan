@@ -3,9 +3,9 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "name", "primaryColor", "primaryColorText", "secondaryColor", "secondaryColorText",
-    "contrastMode", "titleTemplate", "subtitleTemplate", "acceptText", "declineText",
-    "acceptEmoji", "declineEmoji", "dateIcon", "locationIcon", "headerEmoji",
-    "floatingElements", "preview"
+    "backgroundColor", "backgroundColorText", "contrastMode", "titleTemplate", 
+    "subtitleTemplate", "acceptText", "declineText", "acceptEmoji", "declineEmoji", 
+    "dateIcon", "locationIcon", "headerEmoji", "floatingElements", "preview"
   ]
 
   connect() {
@@ -48,6 +48,20 @@ export default class extends Controller {
         }
       })
     }
+
+    if (this.hasBackgroundColorTarget && this.hasBackgroundColorTextTarget) {
+      this.backgroundColorTarget.addEventListener('input', () => {
+        this.backgroundColorTextTarget.value = this.backgroundColorTarget.value
+        this.updatePreview()
+      })
+      
+      this.backgroundColorTextTarget.addEventListener('input', () => {
+        if (this.isValidHexColor(this.backgroundColorTextTarget.value)) {
+          this.backgroundColorTarget.value = this.backgroundColorTextTarget.value
+          this.updatePreview()
+        }
+      })
+    }
   }
 
   updatePreviewStyles() {
@@ -55,6 +69,7 @@ export default class extends Controller {
 
     const primaryColor = this.primaryColorTarget?.value || '#d4a574'
     const secondaryColor = this.secondaryColorTarget?.value || '#90c695'
+    const backgroundColor = this.backgroundColorTarget?.value || ''
     const contrastMode = this.contrastModeTarget?.value || 'dark'
     
     const textColor = contrastMode === 'dark' ? '#ffffff' : '#000000'
@@ -70,8 +85,13 @@ export default class extends Controller {
       previewContainer.style.setProperty('--theme-bg-text', backgroundTextColor)
       previewContainer.style.setProperty('--theme-card-bg', cardBackground)
 
-      // Actualizar gradiente de fondo
-      const gradient = `linear-gradient(135deg, ${this.lightenColor(primaryColor, 0.8)} 0%, ${this.lightenColor(primaryColor, 0.6)} 50%, ${this.lightenColor(primaryColor, 0.4)} 100%)`
+      // Actualizar gradiente de fondo - usar backgroundColor si está disponible
+      let gradient
+      if (backgroundColor && backgroundColor !== '') {
+        gradient = `linear-gradient(135deg, ${backgroundColor} 0%, ${primaryColor} 50%, ${secondaryColor} 100%)`
+      } else {
+        gradient = `linear-gradient(135deg, ${this.lightenColor(primaryColor, 0.8)} 0%, ${this.lightenColor(primaryColor, 0.6)} 50%, ${this.lightenColor(primaryColor, 0.4)} 100%)`
+      }
       previewContainer.style.background = gradient
 
       // Actualizar estilos específicos

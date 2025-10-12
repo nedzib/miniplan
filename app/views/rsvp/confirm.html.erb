@@ -22,7 +22,7 @@
 <%= stylesheet_link_tag 'individual_rsvp', 'data-turbo-track': 'reload' %>
 
 <div class="py-6 w-full" 
-     style="<%= theme.background_gradient.present? ? "background: #{theme.background_gradient};" : "background: linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%);" %> <%= theme.generate_css_variables.map { |k, v| "#{k}: #{v};" }.join(' ') %>"
+     style="background: <%= theme.safe_background_gradient %>; <%= theme.generate_css_variables.map { |k, v| "#{k}: #{v};" }.join(' ') %>"
      data-controller="rsvp" 
      data-rsvp-hash-id-value="<%= @invitation.hash_id %>" 
      <% if show_countdown %>data-rsvp-deadline-value="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
@@ -53,64 +53,22 @@
       </div>
     <% end %>
 
-<%
-  # Mostrar countdown si hay deadline y no ha pasado y la invitación no está aceptada
-  show_countdown = @event.rsvp_deadline && 
-                   !rsvp_deadline_passed?(@event) && 
-                   @invitation.status != 'accepted'
-%>
-
-<div class="py-6 w-full hippie-background" data-controller="rsvp" data-rsvp-hash-id-value="<%= @invitation.hash_id %>" <% if show_countdown %>data-countdown-target="<%= @event.rsvp_deadline.to_i * 1000 %>"<% end %>>
-  <!-- Floating hippie elements -->
-  <div class="floating-element" style="top: 10%; left: 5%; font-size: 2rem;">🌻</div>
-  <div class="floating-element" style="top: 15%; right: 8%; font-size: 1.5rem;">✌️</div>
-  <div class="floating-element" style="top: 25%; left: 15%; font-size: 1.8rem;">🌿</div>
-  <div class="floating-element" style="top: 35%; right: 20%; font-size: 2.2rem;">☮️</div>
-  <div class="floating-element" style="top: 45%; left: 8%; font-size: 1.6rem;">�</div>
-  <div class="floating-element" style="top: 55%; right: 12%; font-size: 1.9rem;">🍄</div>
-  <div class="floating-element" style="top: 65%; left: 25%; font-size: 1.7rem;">🦋</div>
-  <div class="floating-element" style="top: 75%; right: 15%; font-size: 2rem;">🌸</div>
-  
-  <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <!-- Countdown Section -->
-    <% if show_countdown %>
-      <div class="text-center mb-3 animate-fade-in">
-        <div class="inline-block text-white px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, #d4a574 0%, #e4a574 100%); border: 2px solid #c49a6c;">
-          <div class="flex items-center justify-center space-x-2">
-            <div class="text-center flex flex-row">
-              <% if @invitation.status == 'accepted' && has_pending_family_members %>
-                <p class="text-xs font-medium">Confirma a tu tribu hasta:</p>
-              <% else %>
-                <p class="text-xs font-medium">Confirmaciones hasta:</p>
-              <% end %>
-              <p class="text-xs mx-2 font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
-              <div id="countdown-timer" class="text-sm font-bold" data-deadline="<%= @event.rsvp_deadline.to_i * 1000 %>">
-                <!-- El countdown se actualizará con JavaScript -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
     <!-- Mensaje si el deadline ha pasado -->
     <% if @event.rsvp_deadline && rsvp_deadline_passed?(@event) %>
       <div class="text-center mb-6 sm:mb-8 animate-fade-in">
-        <div class="hippie-card mb-4" style="background: linear-gradient(135deg, #e4a574 0%, #d4956a 100%); border: 3px solid #c49a6c;">
-          <div class="p-4 sm:p-6">
-            <div class="text-2xl mb-2">⏰</div>
-            <h3 class="text-lg sm:text-xl font-bold mb-2 text-white">Tiempo límite de confirmación cerrado</h3>
-            <p class="text-sm sm:text-base text-white mb-2">
-              Las confirmaciones cerraron el <%= l(@event.rsvp_deadline, format: :long) %>
+        <div class="mb-4 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); border: 3px solid <%= theme.primary_color %>; color: <%= theme.text_color %>;">
+          <div class="text-2xl mb-2">⏰</div>
+          <h3 class="text-lg sm:text-xl font-bold mb-2">Tiempo límite de confirmación cerrado</h3>
+          <p class="text-sm sm:text-base mb-2">
+            Las confirmaciones cerraron el <%= l(@event.rsvp_deadline, format: :long) %>
+          </p>
+          <% unless @invitation.status == 'pending' %>
+            <p class="text-sm">
+              Tu estado actual: <span class="font-bold">
+                <%= @invitation.status == 'accepted' ? "En armonía #{theme.status_accepted_emoji}" : "En pausa #{theme.status_declined_emoji}" %>
+              </span>
             </p>
-            <% unless @invitation.status == 'pending' %>
-              <p class="text-sm text-white">
-                Tu estado actual: <span class="font-bold">
-                  <%= @invitation.status == 'accepted' ? 'En armonía ✌️' : 'En pausa 🌙' %>
-                </span>
-              </p>
-            <% end %>
-          </div>
+          <% end %>
         </div>
       </div>
     <% end %>
@@ -118,18 +76,14 @@
     <!-- Header con animación -->
     <div class="text-center mb-6 sm:mb-8 animate-fade-in">
       <div class="inline-flex items-center justify-center gap-2 mb-4">
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #d4a574;">
-          <div class="text-3xl sm:text-4xl">�</div>
-        </div>
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #90c695;">
-          <div class="text-3xl sm:text-4xl">✌️</div>
-        </div>
-        <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: #d4a574;">
-          <div class="text-3xl sm:text-4xl">�</div>
-        </div>
+        <% header_emojis.each_with_index do |emoji, index| %>
+          <div class="inline-block p-3 sm:p-4 bg-white rounded-full shadow-lg border-3 sm:border-4" style="border-color: <%= index.even? ? theme.primary_color : theme.secondary_color %>;">
+            <div class="text-3xl sm:text-4xl"><%= emoji %></div>
+          </div>
+        <% end %>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-bold mb-2 px-2" style="color: #8b4513; text-shadow: 2px 2px 4px rgba(212, 165, 116, 0.3);">
-        ¡Te invitamos a nuestro gathering! �✌️
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 px-2" style="color: <%= theme.background_text_color %>; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">
+        <%= theme.interpolate_template(theme.safe_title_template, title_vars) %>
       </h1>
     </div>
 
@@ -139,10 +93,10 @@
       <% when 'accepted' %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-accepted">
           <div class="flex items-center gap-2">
-            <span class="text-2xl animate-bounce">🌻</span>
+            <span class="text-2xl animate-bounce"><%= theme.status_accepted_emoji %></span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">¡Ya confirmaste tu asistencia al gathering!</p>
-              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Tu presencia está confirmada en armonía con el universo ✌️�</p>
+              <p class="font-bold text-sm sm:text-base" style="color: <%= theme.background_text_color %>;">¡Ya confirmaste tu asistencia!</p>
+              <p class="text-xs sm:text-sm" style="color: <%= theme.background_text_color %>;">Tu presencia está confirmada en armonía <%= theme.accept_emoji %></p>
             </div>
             <span class="text-xl">✅</span>
           </div>
@@ -150,10 +104,10 @@
       <% when 'declined' %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-declined">
           <div class="flex items-center gap-2">
-            <span class="text-2xl">🌙</span>
+            <span class="text-2xl"><%= theme.status_declined_emoji %></span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">Has declinado la invitación</p>
-              <p class="text-xs sm:text-sm" style="color: #5d4e37;">Esperamos verte en el futuro 💜</p>
+              <p class="font-bold text-sm sm:text-base" style="color: <%= theme.background_text_color %>;">Has declinado la invitación</p>
+              <p class="text-xs sm:text-sm" style="color: <%= theme.background_text_color %>;">Esperamos verte en el futuro 💜</p>
             </div>
             <span class="text-xl">💔</span>
           </div>
@@ -161,10 +115,10 @@
       <% else %>
         <div class="flex items-center justify-center p-4 rounded-xl border-2 rsvp-status-indicator rsvp-status-pending">
           <div class="flex items-center gap-2">
-            <span class="text-2xl">�</span>
+            <span class="text-2xl"><%= theme.status_pending_emoji %></span>
             <div class="text-center">
-              <p class="font-bold text-sm sm:text-base" style="color: #8b4513;">Esperando tu confirmación</p>
-              <p class="text-xs sm:text-sm" style="color: #5d4e37;">¿Te unirás a nuestro gathering? 🌻💜</p>
+              <p class="font-bold text-sm sm:text-base" style="color: <%= theme.background_text_color %>;">Esperando tu confirmación</p>
+              <p class="text-xs sm:text-sm" style="color: <%= theme.background_text_color %>;">¿Te unirás? <%= theme.accept_emoji %>💜</p>
             </div>
             <span class="text-xl">⏳</span>
           </div>
@@ -173,136 +127,132 @@
     </div>
 
     <!-- Tarjeta principal de invitación -->
-    <div class="hippie-card">
+    <div class="p-4 sm:p-6 lg:p-8 rounded-xl border-3 sm:border-4" style="background: <%= theme.card_background %>; border-color: <%= theme.primary_color %>;">
       <!-- Header de la tarjeta -->
-      <div class="hippie-card-header text-center">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2 px-2"><%= @event.title %></h2>
-        <p class="text-base sm:text-lg px-2">
-          Querida alma <span class="font-semibold"><%= @invitation.name %></span> 🌻
+      <div class="text-center mb-4 sm:mb-6">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 px-2" style="color: <%= theme.background_text_color %>;"><%= @event.title %></h2>
+        <p class="text-base sm:text-lg px-2" style="color: <%= theme.background_text_color %>;">
+          <%= theme.interpolate_template(theme.safe_subtitle_template, subtitle_vars) %>
         </p>
       </div>
 
-      <!-- Contenido de la tarjeta -->
-      <div class="p-4 sm:p-6 lg:p-8">
-        <!-- Descripción del evento -->
-        <% if @event.description.present? %>
-          <div class="mb-6 sm:mb-8 text-center">
-            <p class="text-base sm:text-lg leading-relaxed px-2" style="color: #5d4e37;"><%= @event.description %></p>
-            <div class="text-xl sm:text-2xl mt-2">� ✌️ 🌿 ☮️ 🦋</div>
-          </div>
+      <!-- Descripción del evento -->
+      <% if @event.description.present? %>
+        <div class="mb-6 sm:mb-8 text-center">
+          <p class="text-base sm:text-lg leading-relaxed px-2" style="color: <%= theme.background_text_color %>;"><%= @event.description %></p>
+          <div class="text-xl sm:text-2xl mt-2"><%= theme.description_emojis %></div>
+        </div>
+      <% end %>
+
+      <!-- Detalles del evento -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <!-- Fecha y Hora -->
+        <%= render DetailCardComponent.new(
+              icon: theme.date_icon,
+              title: "Fecha y Hora",
+              body: capture do %>
+                <p><%= format_date_spanish(@event.start_time) if @event.start_time %></p>
+                <p>
+                  <%= format_time_spanish(@event.start_time) if @event.start_time %>
+                  <% if @event.end_time %>
+                    - <%= format_time_spanish(@event.end_time) %>
+                  <% end %>
+                </p>
+              <% end,
+              theme: theme
+            ) %>
+
+        <!-- Ubicación -->
+        <% if @event.location.present? %>
+          <%= render DetailCardComponent.new(
+                icon: theme.location_icon,
+                title: "Lugar del encuentro",
+                body: @event.location,
+                url: @event.map_url.present? ? @event.map_url : nil,
+                button_title: @event.map_url.present? ? "Ver en mapa" : nil,
+                theme: theme
+              ) %>
         <% end %>
 
-        <!-- Detalles del evento -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <!-- Fecha y Hora -->
-          <%= render DetailCardComponent.new(
-                icon: "⏰",
-                title: "Fecha y Hora del gathering",
-                body: capture do %>
-                  <p><%= format_date_spanish(@event.start_time) if @event.start_time %></p>
-                  <p>
-                    <%= format_time_spanish(@event.start_time) if @event.start_time %>
-                    <% if @event.end_time %>
-                      - <%= format_time_spanish(@event.end_time) %>
-                    <% end %>
-                  </p>
-                <% end,
-                theme: 'hippie'
-              ) %>
+        <!-- Lista de Regalos -->
+        <%= render DetailCardComponent.new(
+              icon: theme.gifts_icon,
+              title: "Lista de Regalos",
+              body: "¡Registra tu regalo para evitar duplicados!",
+              url: public_gifts_path(@event.hash_id),
+              button_title: "Ver Lista",
+              theme: theme
+            ) %>
+      </div>
 
-          <!-- Ubicación -->
-          <% if @event.location.present? %>
-            <%= render DetailCardComponent.new(
-                  icon: "🌍",
-                  title: "Lugar del encuentro",
-                  body: @event.location,
-                  url: @event.map_url.present? ? @event.map_url : nil,
-                  button_title: @event.map_url.present? ? "Ver en mapa" : nil,
-                  theme: 'hippie'
-                ) %>
-          <% end %>
+      <!-- Mensaje personalizado -->
+      <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%); border-color: <%= theme.secondary_color %>;">
+        <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: <%= theme.background_text_color %>;">
+          Tu presencia es tan valiosa como una flor en el jardín de la vida
+        </h3>
+        <p class="text-sm sm:text-base px-2" style="color: <%= theme.background_text_color %>;">
+          <%= theme.safe_success_message %>
+        </p>
+        <div class="text-xl sm:text-2xl mt-3"><%= theme.description_emojis %></div>
+      </div>
 
-          <!-- Lista de Regalos -->
-          <%= render DetailCardComponent.new(
-                icon: "🎁",
-                title: "Lista de Regalos",
-                body: "¡Registra tu regalo para evitar duplicados en la tribu!",
-                url: public_gifts_path(@event.hash_id),
-                button_title: "Ver Lista",
-                theme: 'hippie'
-              ) %>
+      <!-- Botones de confirmación -->
+      <% if rsvp_deadline_active?(@event) %>
+        <div data-rsvp-target="confirmationSection">
+          <div class="flex flex-col gap-3 sm:gap-4 max-w-md mx-auto">
+            <button 
+              data-action="click->rsvp#accept"
+              data-rsvp-target="acceptButton"
+              class="flex items-center justify-between w-full py-3 px-6 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 shadow-lg hover:shadow-xl"
+              style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); color: <%= theme.text_color %>;">
+              <span class="text-lg"><%= theme.accept_emoji %></span>
+              <span class="flex-1"><%= theme.safe_accept_text %></span>
+              <span class="text-lg">✌️</span>
+            </button>
+            
+            <button 
+              data-action="click->rsvp#decline"
+              data-rsvp-target="declineButton"
+              class="flex items-center justify-between w-full py-3 px-6 rounded-lg font-medium text-sm sm:text-base transition-all duration-200 border-2 shadow-lg hover:shadow-xl"
+              style="border-color: <%= theme.primary_color %>; background: rgba(255,255,255,0.9); color: <%= theme.background_text_color %>;">
+              <span class="text-lg"><%= theme.decline_emoji %></span>
+              <span class="flex-1"><%= theme.safe_decline_text %></span>
+              <span class="text-lg">💔</span>
+            </button>
+          </div>
         </div>
-
-        <!-- Mensaje personalizado -->
-        <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #f5e6d3 0%, #e8d5b7 100%); border-color: #d4a574;">
-          <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: #8b4513;">
-            Tu presencia es tan valiosa como una flor en el jardín de la vida
+      <% else %>
+        <div class="text-center p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); border-color: #CCCCCC;">
+          <div class="text-2xl mb-2">🔒</div>
+          <h3 class="text-lg sm:text-xl font-semibold mb-2" style="color: #666;">
+            Confirmaciones cerradas
           </h3>
-          <p class="text-sm sm:text-base px-2" style="color: #5d4e37;">
-            Esperamos que puedas unirte a nuestro gathering especial, <%= @invitation.name %>. 
-            Por favor confirma tu asistencia para que podamos preparar el espacio en armonía perfecta. �✌️
+          <p class="text-sm sm:text-base" style="color: #888;">
+            El tiempo para confirmar tu asistencia ha terminado.
+            <% if @invitation.status != 'pending' %>
+              <br>Tu estado actual se mantiene como: 
+              <span class="font-bold">
+                <%= @invitation.status == 'accepted' ? 'Confirmado ✅' : 'Declinado ❌' %>
+              </span>
+            <% end %>
           </p>
-          <div class="text-xl sm:text-2xl mt-3">� ✌️ 🌿 ☮️ 🦋</div>
         </div>
+      <% end %>
 
-        <!-- Botones de confirmación -->
-        <% if rsvp_deadline_active?(@event) %>
-          <div data-rsvp-target="confirmationSection">
-            <div class="flex flex-col gap-3 sm:gap-4 max-w-md mx-auto">
-              <button 
-                data-action="click->rsvp#accept"
-                data-rsvp-target="acceptButton"
-                class="hippie-button hippie-button-accept">
-                <span class="text-lg">�</span>
-                <span class="flex-1">¡Sí, me uno al gathering!</span>
-                <span class="text-lg">✌️</span>
-              </button>
-              
-              <button 
-                data-action="click->rsvp#decline"
-                data-rsvp-target="declineButton"
-                class="hippie-button hippie-button-decline">
-                <span class="text-lg">🌙</span>
-                <span class="flex-1">No podré ir esta vez</span>
-                <span class="text-lg">💔</span>
-              </button>
-            </div>
-          </div>
-        <% else %>
-          <div class="text-center p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%); border-color: #CCCCCC;">
-            <div class="text-2xl mb-2">🔒</div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-2" style="color: #666;">
-              Confirmaciones cerradas
-            </h3>
-            <p class="text-sm sm:text-base" style="color: #888;">
-              El tiempo para confirmar tu asistencia ha terminado.
-              <% if @invitation.status != 'pending' %>
-                <br>Tu estado actual se mantiene como: 
-                <span class="font-bold">
-                  <%= @invitation.status == 'accepted' ? 'Confirmado ✅' : 'Declinado ❌' %>
-                </span>
-              <% end %>
-            </p>
-          </div>
-        <% end %>
-
-        <!-- Sección de respuesta (oculta inicialmente) -->
-        <div data-rsvp-target="responseSection" class="hidden">
-          <!-- El contenido se llenará dinámicamente con los partials -->
-        </div>
+      <!-- Sección de respuesta (oculta inicialmente) -->
+      <div data-rsvp-target="responseSection" class="hidden">
+        <!-- El contenido se llenará dinámicamente con los partials -->
       </div>
     </div>
 
     <!-- Footer -->
-    <div class="text-center px-4 pb-4" style="color: #5d4e37;">
+    <div class="text-center px-4 pb-4" style="color: <%= theme.background_text_color %>;">
       <p class="text-xs sm:text-sm">
-        Si tienes alguna pregunta, fluye hasta nosotros con amor y paz. 🌻✌️
+        <%= theme.safe_footer_message %>
       </p>
       <p class="text-xs mt-2">
-        Miniplan • Creando momentos en armonía como las flores en primavera �
+        Miniplan • Creando momentos únicos <%= header_emojis.join(' ') %>
       </p>
     </div>
   </div>
 </div>
-
-

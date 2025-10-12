@@ -40,7 +40,7 @@ class EventThemesController < ApplicationController
 
   def theme_params
     params.require(:event_theme).permit(
-      :name, :primary_color, :secondary_color, :contrast_mode,
+      :name, :primary_color, :secondary_color, :background_color, :contrast_mode,
       :background_gradient, :floating_elements, :header_emoji,
       :title_template, :subtitle_template, :description_emojis,
       :accept_emoji, :decline_emoji, :accept_text, :decline_text,

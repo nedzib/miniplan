@@ -5,6 +5,7 @@
 #  id                    :bigint           not null, primary key
 #  accept_emoji          :string
 #  accept_text           :string
+#  background_color      :string
 #  background_gradient   :text
 #  button_style_class    :string
 #  card_style_class      :string
@@ -41,6 +42,7 @@ class EventTheme < ApplicationRecord
   validates :name, presence: true
   validates :primary_color, presence: true, format: { with: /\A#[0-9A-Fa-f]{6}\z/, message: "debe ser un color hexadecimal válido" }
   validates :secondary_color, presence: true, format: { with: /\A#[0-9A-Fa-f]{6}\z/, message: "debe ser un color hexadecimal válido" }
+  validates :background_color, format: { with: /\A#[0-9A-Fa-f]{6}\z/, message: "debe ser un color hexadecimal válido" }, allow_blank: true
   validates :contrast_mode, presence: true, inclusion: { in: %w[light dark], message: "debe ser 'light' o 'dark'" }
 
   # Métodos para obtener configuraciones con valores por defecto
@@ -72,10 +74,21 @@ class EventTheme < ApplicationRecord
     {
       '--theme-primary': primary_color,
       '--theme-secondary': secondary_color,
+      '--theme-background': background_color || primary_color,
       '--theme-text': text_color,
       '--theme-bg-text': background_text_color,
       '--theme-card-bg': card_background
     }
+  end
+
+  def safe_background_gradient
+    if background_color.present?
+      background_color
+    elsif background_gradient.present?
+      background_gradient
+    else
+      "linear-gradient(135deg, #fdf4e3 0%, #f5e6d3 50%, #e8d5b7 100%)"
+    end
   end
 
   def safe_title_template

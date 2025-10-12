@@ -5,6 +5,7 @@
 #  id                    :bigint           not null, primary key
 #  accept_emoji          :string
 #  accept_text           :string
+#  background_color      :string
 #  background_gradient   :text
 #  button_style_class    :string
 #  card_style_class      :string
