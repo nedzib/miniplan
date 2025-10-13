@@ -1,8 +1,8 @@
 <% content_for :title, "Lista de Regalos - #{@event.title}" %>
 
 <div class="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 py-8">
-  <!-- Floating Gift Elements -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+  <!-- Floating Gift Elements - Hidden on mobile -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
     <div class="absolute top-[10%] left-[5%] text-4xl animate-bounce" style="animation-delay: 0s;">🎁</div>
     <div class="absolute top-[15%] right-[8%] text-3xl animate-bounce" style="animation-delay: 1s;">🎀</div>
     <div class="absolute top-[25%] left-[15%] text-2xl animate-bounce" style="animation-delay: 2s;">🎉</div>
