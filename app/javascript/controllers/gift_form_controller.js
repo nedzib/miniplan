@@ -43,12 +43,14 @@ export default class extends Controller {
       this.clearFieldError(this.nameFieldTarget)
     }
     
-    // Validar nombre de quien compra
-    if (this.purchasedByFieldTarget.value.trim().length < 2) {
-      this.showFieldError(this.purchasedByFieldTarget, "Tu nombre debe tener al menos 2 caracteres")
-      isValid = false
-    } else {
-      this.clearFieldError(this.purchasedByFieldTarget)
+    // Validar nombre de quien compra (solo si el campo existe)
+    if (this.hasPurchasedByFieldTarget) {
+      if (this.purchasedByFieldTarget.value.trim().length < 2) {
+        this.showFieldError(this.purchasedByFieldTarget, "Tu nombre debe tener al menos 2 caracteres")
+        isValid = false
+      } else {
+        this.clearFieldError(this.purchasedByFieldTarget)
+      }
     }
     
     return isValid
