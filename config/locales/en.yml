@@ -28,4 +28,199 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  # Landing page
+  landing:
+    title: "MiniPlan"
+    subtitle: "Your personal event planning assistant"
+    get_started: "Get Started"
+
+  # Navigation
+  navigation:
+    back_to_events: "Back to Events"
+    back_to_event: "Back to Event"
+    edit: "Edit"
+    delete: "Delete"
+    theme: "Theme"
+
+  # Common words
+  common:
+    title: "Title"
+    description: "Description"
+    name: "Name"
+    date: "Date"
+    location: "Location"
+    save: "Save"
+    cancel: "Cancel"
+    create: "Create"
+    update: "Update"
+    confirm: "Confirm"
+    share: "Share"
+    copy: "Copy"
+    edit: "Edit"
+    delete: "Delete"
+    yes: "Yes"
+    no: "No"
+    total: "Total"
+    details: "Details"
+    tip: "Tip"
+    warning: "Warning"
+    success: "Success"
+    error: "Error"
+
+  # Events
+  events:
+    title: "Events"
+    new_event: "New Event"
+    event_details: "Event Details"
+    edit_event: "Edit Event"
+    create_event: "Create Event"
+    delete_confirm: "Are you sure you want to delete this event?"
+    show:
+      details: "Event Details"
+      description: "Description"
+      date_and_time: "Date and Time"
+      location: "Location"
+      budget: "Budget"
+      guests: "Guests"
+      gifts: "Gifts"
+      quick_actions: "Quick Actions"
+      share_event: "Share Event"
+      rsvp_link: "RSVP Link"
+      gift_list: "Gift List"
+      manage_invitations: "Manage Invitations"
+      manage_budget: "Manage Budget"
+      budget_total: "Budget Total"
+      confirmed_guests: "Confirmed Guests"
+      pending_guests: "Pending Guests"
+      registered_gifts: "Registered Gifts"
+
+  # Gifts
+  gifts:
+    title: "Gift List"
+    for_event: "For:"
+    avoid_duplicates: "Let's avoid duplicate gifts! Register what you're going to give here ✨"
+    total_gifts: "Total Gifts"
+    share_public_list: "Share Public List"
+    share_description: "Share this link so guests can register their gifts"
+    register_gift: "Register Gift"
+    share_what_you_give: "Share what you're going to give to avoid duplicates!"
+    gift_name: "Gift Name"
+    gift_name_placeholder: "E.g.: Dinnerware set, Table lamp..."
+    register_button: "Register Gift"
+    registered_gifts: "Registered Gifts"
+    no_gifts_yet: "No gifts registered yet!"
+    be_first: "Be the first to register a gift for this special event"
+    gift_registered_successfully: "Gift registered successfully"
+    link_copied: "📋 Link copied to clipboard"
+    edit_gift: "Edit gift"
+    delete_gift: "Delete gift"
+    delete_confirm: "Are you sure you want to delete this gift?"
+    cannot_edit_warning: "Once registered, you won't be able to edit or delete the gift. Make sure it's correct! If you need to make changes, contact the event organizer."
+    share_text: "Gift List for %{event_title} - Register your gift to avoid duplicates!"
+
+  # Invitations
+  invitations:
+    title: "Invitations"
+    manage: "Manage Invitations"
+    new_invitation: "New Invitation"
+    edit_invitation: "Edit Invitation"
+    guest_name: "Guest Name"
+    email: "Email"
+    phone: "Phone"
+    family_group: "Family Group"
+    status: "Status"
+    pending: "Pending"
+    confirmed: "Confirmed"
+    declined: "Declined"
+    send_invitation: "Send Invitation"
+    resend: "Resend"
+    delete_confirm: "Are you sure you want to delete this invitation?"
+
+  # Budget/Presupuestos
+  budget:
+    title: "Budget"
+    manage: "Manage Budget"
+    new_item: "New Item"
+    edit_item: "Edit Item"
+    item_name: "Item Name"
+    category: "Category"
+    estimated_cost: "Estimated Cost"
+    actual_cost: "Actual Cost"
+    paid: "Paid"
+    pending: "Pending"
+    total_estimated: "Total Estimated"
+    total_actual: "Total Actual"
+    remaining_budget: "Remaining Budget"
+    delete_confirm: "Are you sure you want to delete this budget item?"
+
+  # RSVP
+  rsvp:
+    title: "Confirm Attendance"
+    confirm_attendance: "Confirm Attendance"
+    will_attend: "I will attend"
+    wont_attend: "I can't attend"
+    maybe: "Maybe"
+    additional_guests: "Additional guests"
+    dietary_requirements: "Dietary requirements"
+    special_requests: "Special requests"
+    thank_you: "Thank you for confirming your attendance!"
+    response_recorded: "Your response has been recorded"
+    family_confirmation: "Family Confirmation"
+    family_confirmation_description: "Confirm your family group's attendance to %{event_title}. %{description}"
+    group_confirmation_title: "Group Confirmation"
+    group_confirmation_description: "Confirm your family group's attendance: %{group_name}. %{date} %{location}"
+    family_confirmation_alt: "Family confirmation for %{event_title} - %{group_name}"
+    confirmations_until: "Confirmations until:"
+    deadline_closed: "Confirmation deadline closed"
+    deadline_closed_message: "Confirmations closed on %{deadline}"
+    group_label: "Group:"
+    confirm_all_members: "Confirm the attendance of all members of your tribe"
+    date_and_time: "Date and Time"
+    event_location: "Meeting Place"
+    gift_list: "Gift List"
+    gift_list_description: "Register your gift to avoid duplicates!"
+    view_list: "View List"
+    view_on_map: "View on map"
+    tribe_members: "Tribe Members: %{group_name}"
+    confirm_who_joins: "Confirm who will be able to join"
+    status:
+      accepted: "In harmony"
+      declined: "On pause"
+      pending: "Thinking about it"
+    count_on_me: "Count on me!"
+    cannot_attend: "I can't go"
+    confirmations_closed: "Confirmations closed - Status:"
+    special_soul_message: "Each soul is special like a flower in the garden of life"
+    harmony_message: "We hope that the whole tribe %{group_name} can join our event. May each confirmation flow with the harmony of the universe."
+    miniplan_footer: "Miniplan • Creating unique moments"
+
+  # Family Groups
+  family_groups:
+    title: "Family Groups"
+    new_group: "New Group"
+    edit_group: "Edit Group"
+    group_name: "Group Name"
+    members: "Members"
+    add_member: "Add Member"
+
+  # Themes
+  themes:
+    title: "Event Themes"
+    edit_theme: "Edit Theme"
+    primary_color: "Primary Color"
+    secondary_color: "Secondary Color"
+    background: "Background"
+    save_theme: "Save Theme"
+
+  # Form validations
+  errors:
+    required_field: "This field is required"
+    invalid_email: "Invalid email"
+    invalid_format: "Invalid format"
+
+  # Notifications
+  notifications:
+    created: "%{item} created successfully"
+    updated: "%{item} updated successfully"
+    deleted: "%{item} deleted successfully"
+    error: "An error occurred. Please try again."

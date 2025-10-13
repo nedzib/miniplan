@@ -38,11 +38,30 @@ module GiftsHelper
 
   def gifts_summary_text(gifts_count, people_count)
     if gifts_count == 0
-      "¡Aún no hay regalos registrados!"
+      t("gifts.no_gifts_yet")
     elsif gifts_count == 1
-      "1 regalo registrado por 1 persona"
+      "1 #{t('gifts.title').downcase} registrado por 1 persona"
     else
-      "#{gifts_count} regalos registrados por #{people_count} #{people_count == 1 ? 'persona' : 'personas'}"
+      "#{gifts_count} #{t('gifts.title').downcase} registrados por #{people_count} #{people_count == 1 ? 'persona' : 'personas'}"
     end
+  end
+
+  def share_gifts_text(event)
+    t("gifts.share_text", event_title: event.title)
+  end
+
+  # Para pasar traducciones a JavaScript
+  def gifts_js_translations
+    {
+      link_copied: t("gifts.link_copied"),
+      share_title: "#{t('gifts.title')} - #{@event.title}",
+      share_text: "#{gifts_icon} #{t('gifts.share_text', event_title: @event.title)}"
+    }.to_json.html_safe
+  end
+
+  private
+
+  def gifts_icon
+    @event&.current_theme&.gifts_icon || "🎁"
   end
 end

@@ -4,11 +4,11 @@
   title_vars = { title: @event.title, name: @family_group.name, emoji: theme.header_emoji }
 %>
 
-<% content_for :title, "#{@event.title} - Confirmación Familiar" %>
-<% content_for :description, "Confirma la asistencia de tu grupo familiar a #{@event.title}. #{@event.description.present? ? @event.description : 'Te esperamos en este evento especial.'}" %>
-<% content_for :og_title, "#{header_emojis.first} #{@event.title} - Confirmación Grupal" %>
-<% content_for :og_description, "Confirma la asistencia de tu grupo familiar: #{@family_group.name}. #{@event.start_time ? "#{theme.date_icon} #{format_date_spanish(@event.start_time)}" : ""} #{@event.location.present? ? "#{theme.location_icon} #{@event.location}" : ""}" %>
-<% content_for :og_image_alt, "Confirmación familiar para #{@event.title} - #{@family_group.name}" %>
+<% content_for :title, "#{@event.title} - #{t('rsvp.family_confirmation')}" %>
+<% content_for :description, t('rsvp.family_confirmation_description', event_title: @event.title, description: @event.description.present? ? @event.description : 'Te esperamos en este evento especial.') %>
+<% content_for :og_title, "#{header_emojis.first} #{@event.title} - #{t('rsvp.group_confirmation_title')}" %>
+<% content_for :og_description, t('rsvp.group_confirmation_description', group_name: @family_group.name, date: @event.start_time ? "#{theme.date_icon} #{format_date_spanish(@event.start_time)}" : "", location: @event.location.present? ? "#{theme.location_icon} #{@event.location}" : "") %>
+<% content_for :og_image_alt, t('rsvp.family_confirmation_alt', event_title: @event.title, group_name: @family_group.name) %>
 <% content_for :og_url, rsvp_family_confirm_url(hash_id: @family_group.hash_id) %>
 
 <style>
@@ -65,7 +65,7 @@
         <div class="inline-block px-3 py-2 rounded-lg shadow-sm" style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); border: 2px solid <%= theme.primary_color %>; color: <%= theme.text_color %>;">
           <div class="flex items-center justify-center space-x-2">
             <div class="text-center flex flex-row">
-              <p class="text-xs font-medium">Confirmaciones hasta:</p>
+              <p class="text-xs font-medium"><%= t('rsvp.confirmations_until') %></p>
               <p class="text-xs mx-2 font-bold"><%= l(@event.rsvp_deadline, format: :short) %></p>
               <div id="countdown-timer" 
                    class="text-sm font-bold" 
@@ -84,9 +84,9 @@
       <div class="text-center mb-6 sm:mb-8 animate-fade-in">
         <div class="mb-4 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); border: 3px solid <%= theme.primary_color %>; color: <%= theme.text_color %>;">
           <div class="text-2xl mb-2">⏰</div>
-          <h3 class="text-lg sm:text-xl font-bold mb-2">Tiempo límite de confirmación cerrado</h3>
+          <h3 class="text-lg sm:text-xl font-bold mb-2"><%= t('rsvp.deadline_closed') %></h3>
           <p class="text-sm sm:text-base mb-2">
-            Las confirmaciones cerraron el <%= l(@event.rsvp_deadline, format: :long) %>
+            <%= t('rsvp.deadline_closed_message', deadline: l(@event.rsvp_deadline, format: :long)) %>
           </p>
         </div>
       </div>
@@ -108,7 +108,7 @@
         <%= theme.interpolate_template(theme.safe_title_template, title_vars) %>
       </h1>
       <p class="text-lg sm:text-xl px-2" style="color: <%= theme.background_text_color %>;">
-        Grupo: <span class="font-semibold"><%= @family_group.name %></span> 👨‍👩‍👧‍👦
+        <%= t('rsvp.group_label') %> <span class="font-semibold"><%= @family_group.name %></span> 👨‍👩‍👧‍👦
       </p>
     </div>
 
@@ -118,7 +118,7 @@
       <div class="text-center mb-4 sm:mb-6">
         <h2 class="text-2xl sm:text-3xl font-bold mb-2 px-2" style="color: <%= theme.background_text_color %>;"><%= @event.title %></h2>
         <p class="text-base sm:text-lg px-2" style="color: <%= theme.background_text_color %>;">
-          Confirma la asistencia de todos los miembros de tu tribu <%= theme.accept_emoji %>
+          <%= t('rsvp.confirm_all_members') %> <%= theme.accept_emoji %>
         </p>
       </div>
 
@@ -135,7 +135,7 @@
         <!-- Fecha y Hora -->
         <%= render DetailCardComponent.new(
               icon: theme.date_icon,
-              title: "Fecha y Hora",
+              title: t('rsvp.date_and_time'),
               body: capture do %>
                 <p><%= format_date_spanish(@event.start_time) if @event.start_time %></p>
                 <p>
@@ -152,10 +152,10 @@
         <% if @event.location.present? %>
           <%= render DetailCardComponent.new(
                 icon: theme.location_icon,
-                title: "Lugar del encuentro",
+                title: t('rsvp.event_location'),
                 body: @event.location,
                 url: @event.map_url.present? ? @event.map_url : nil,
-                button_title: @event.map_url.present? ? "Ver en mapa" : nil,
+                button_title: @event.map_url.present? ? t('rsvp.view_on_map') : nil,
                 theme: theme
               ) %>
         <% end %>
@@ -163,10 +163,10 @@
         <!-- Lista de Regalos -->
         <%= render DetailCardComponent.new(
               icon: theme.gifts_icon,
-              title: "Lista de Regalos",
-              body: "¡Registra tu regalo para evitar duplicados!",
+              title: t('rsvp.gift_list'),
+              body: t('rsvp.gift_list_description'),
               url: public_gifts_path(@event.hash_id),
-              button_title: "Ver Lista",
+              button_title: t('rsvp.view_list'),
               theme: theme
             ) %>
       </div>
@@ -176,10 +176,10 @@
         <div class="text-center mb-6">
           <div class="text-3xl mb-2">👨‍👩‍👧‍👦</div>
           <h3 class="text-lg sm:text-xl font-semibold mb-2" style="color: <%= theme.background_text_color %>;">
-            Miembros de la Tribu: <%= @family_group.name %>
+            <%= t('rsvp.tribe_members', group_name: @family_group.name) %>
           </h3>
           <p class="text-sm sm:text-base" style="color: <%= theme.background_text_color %>;">
-            Confirma quién podrá unirse <%= theme.description_emojis %>
+            <%= t('rsvp.confirm_who_joins') %> <%= theme.description_emojis %>
           </p>
         </div>
         
@@ -200,7 +200,7 @@
                   <div class="flex-1 min-w-0">
                     <h4 class="font-semibold text-sm mb-1 truncate" style="color: <%= theme.background_text_color %>;"><%= invitation.name %></h4>
                     <div class="status-badge status-<%= invitation.status %>" style="font-size: 0.75rem; padding: 0.125rem 0.5rem;">
-                      <%= invitation.status == 'accepted' ? "#{theme.accept_emoji} En armonía" : (invitation.status == 'declined' ? "#{theme.decline_emoji} En pausa" : "#{theme.status_pending_emoji} Pensándolo") %>
+                      <%= invitation.status == 'accepted' ? "#{theme.accept_emoji} #{t('rsvp.status.accepted')}" : (invitation.status == 'declined' ? "#{theme.decline_emoji} #{t('rsvp.status.declined')}" : "#{theme.status_pending_emoji} #{t('rsvp.status.pending')}") %>
                     </div>
                   </div>
                 </div>
@@ -215,7 +215,7 @@
                       data-family-rsvp-target="acceptButton"
                       data-member-id="<%= invitation.id %>">
                       <span class="text-lg"><%= theme.accept_emoji %></span>
-                      <span>¡Cuenta conmigo!</span>
+                      <span><%= t('rsvp.count_on_me') %></span>
                       <span class="text-sm">✌️</span>
                     </button>
                     
@@ -227,7 +227,7 @@
                       data-family-rsvp-target="declineButton"
                       data-member-id="<%= invitation.id %>">
                       <span class="text-sm"><%= theme.decline_emoji %></span>
-                      <span>No podré ir</span>
+                      <span><%= t('rsvp.cannot_attend') %></span>
                       <span class="text-lg">💔</span>
                     </button>
                   </div>
@@ -235,9 +235,9 @@
                   <div class="flex-shrink-0">
                     <div class="text-center py-2 px-3 rounded-lg" style="background-color: #f5f5f5; border: 1px solid #ddd; font-size: 0.75rem;">
                       <p class="text-xs" style="color: #666;">
-                        Confirmaciones cerradas - Estado: 
+                        <%= t('rsvp.confirmations_closed') %> 
                         <span class="font-bold">
-                          <%= invitation.status == 'accepted' ? "En armonía #{theme.accept_emoji}" : (invitation.status == 'declined' ? "En pausa #{theme.decline_emoji}" : "Pensándolo #{theme.status_pending_emoji}") %>
+                          <%= invitation.status == 'accepted' ? "#{t('rsvp.status.accepted')} #{theme.accept_emoji}" : (invitation.status == 'declined' ? "#{t('rsvp.status.declined')} #{theme.decline_emoji}" : "#{t('rsvp.status.pending')} #{theme.status_pending_emoji}") %>
                         </span>
                       </p>
                     </div>
@@ -252,11 +252,10 @@
       <!-- Mensaje personalizado -->
       <div class="text-center mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl border-3 sm:border-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%); border-color: <%= theme.secondary_color %>;">
         <h3 class="text-lg sm:text-xl font-semibold mb-2 px-2" style="color: <%= theme.background_text_color %>;">
-          Cada alma es especial como una flor en el jardín de la vida
+          <%= t('rsvp.special_soul_message') %>
         </h3>
         <p class="text-sm sm:text-base px-2" style="color: <%= theme.background_text_color %>;">
-          Esperamos que toda la tribu <%= @family_group.name %> pueda unirse a nuestro evento. 
-          Que cada confirmación fluya con la armonía del universo. <%= theme.description_emojis %>
+          <%= t('rsvp.harmony_message', group_name: @family_group.name) %> <%= theme.description_emojis %>
         </p>
         <div class="text-xl sm:text-2xl mt-3"><%= theme.description_emojis %> 👨‍👩‍👧‍👦</div>
       </div>
@@ -273,7 +272,7 @@
         <%= theme.safe_footer_message %>
       </p>
       <p class="text-xs mt-2">
-        Miniplan • Creando momentos únicos <%= header_emojis.join(' ') %>
+        <%= t('rsvp.miniplan_footer') %> <%= header_emojis.join(' ') %>
       </p>
     </div>
   </div>

@@ -88,7 +88,7 @@ export default class extends Controller {
     
     if (statusBadge) {
       statusBadge.className = `status-badge status-${status}`
-      statusBadge.textContent = status === 'accepted' ? '✌️ En armonía' : '🌙 En pausa'
+      statusBadge.textContent = status === 'accepted' ? '✌️ Confirmado' : '🌙 Declinado'
     }
     
     // Animación de confirmación

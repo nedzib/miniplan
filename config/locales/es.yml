@@ -1,0 +1,229 @@
+es:
+  # Date and Time formats
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d %b"
+      long: "%d de %B de %Y"
+    month_names: [~, "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+    abbr_month_names: [~, "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+    day_names: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
+    abbr_day_names: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"]
+  
+  time:
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      short: "%d %b %H:%M"
+      long: "%d de %B de %Y a las %H:%M"
+      time: "%H:%M"
+
+  # Landing page
+  landing:
+    title: "MiniPlan"
+    subtitle: "Tu asistente personal para planificación de eventos"
+    get_started: "Comenzar"
+
+  # Navigation
+  navigation:
+    back_to_events: "Volver a Eventos"
+    back_to_event: "Volver al Evento"
+    back: "Volver"
+    edit: "Editar"
+    delete: "Eliminar"
+    theme: "Tema"
+
+  # Common words
+  common:
+    title: "Título"
+    description: "Descripción"
+    name: "Nombre"
+    date: "Fecha"
+    location: "Ubicación"
+    email: "Email"
+    save: "Guardar"
+    cancel: "Cancelar"
+    create: "Crear"
+    update: "Actualizar"
+    confirm: "Confirmar"
+    share: "Compartir"
+    copy: "Copiar"
+    edit: "Editar"
+    delete: "Eliminar"
+    yes: "Sí"
+    no: "No"
+    total: "Total"
+    details: "Detalles"
+    tip: "Consejo"
+    warning: "Advertencia"
+    success: "Éxito"
+    error: "Error"
+    delete_confirm: "¿Estás seguro de que quieres eliminar esto?"
+
+  # Events
+  events:
+    title: "Eventos"
+    new_event: "Nuevo Evento"
+    event_details: "Detalles del Evento"
+    edit_event: "Editar Evento"
+    create_event: "Crear Evento"
+    delete_confirm: "¿Estás seguro de que quieres eliminar este evento?"
+    start_time: "Hora de Inicio"
+    end_time: "Hora de Finalización"
+    rsvp_deadline: "Fecha límite RSVP"
+    closed: "Cerrado"
+    active: "Activo"
+    participants: "participantes"
+    confirmed: "confirmados"
+    no_events_yet: "Aún no hay eventos"
+    create_first_event: "Crea tu primer evento para comenzar"
+    view_invitations: "Ver Invitaciones"
+    logout: "Cerrar Sesión"
+    show:
+      details: "Detalles del Evento"
+      description: "Descripción"
+      date_and_time: "Fecha y Hora"
+      location: "Ubicación"
+      budget: "Presupuesto"
+      guests: "Invitados"
+      gifts: "Regalos"
+      quick_actions: "Acciones Rápidas"
+      share_event: "Compartir Evento"
+      rsvp_link: "Enlace RSVP"
+      gift_list: "Lista de Regalos"
+      manage_invitations: "Gestionar Invitaciones"
+      manage_budget: "Gestionar Presupuesto"
+      budget_total: "Total del Presupuesto"
+      confirmed_guests: "Invitados Confirmados"
+      pending_guests: "Invitados Pendientes"
+      registered_gifts: "Regalos Registrados"
+
+  # Gifts
+  gifts:
+    title: "Lista de Regalos"
+    for_event: "Para:"
+    avoid_duplicates: "¡Evitemos regalos duplicados! Registra aquí lo que vas a regalar ✨"
+    total_gifts: "Total de Regalos"
+    share_public_list: "Compartir Lista Pública"
+    share_description: "Comparte este enlace para que los invitados registren sus regalos"
+    register_gift: "Registrar Regalo"
+    share_what_you_give: "¡Comparte qué vas a regalar para evitar duplicados!"
+    gift_name: "Nombre del Regalo"
+    gift_name_placeholder: "Ej: Set de vajilla, Lámpara de mesa..."
+    register_button: "Registrar Regalo"
+    registered_gifts: "Regalos Registrados"
+    no_gifts_yet: "¡Aún no hay regalos registrados!"
+    be_first: "Sé el primero en registrar un regalo para este evento especial"
+    gift_registered_successfully: "Regalo registrado exitosamente"
+    link_copied: "📋 Enlace copiado al portapapeles"
+    edit_gift: "Editar regalo"
+    delete_gift: "Eliminar regalo"
+    delete_confirm: "¿Estás seguro de que quieres eliminar este regalo?"
+    cannot_edit_warning: "Una vez registrado, no podrás editar ni eliminar el regalo. ¡Asegúrate de que esté correcto! Si necesitas hacer cambios, contacta al organizador del evento."
+    share_text: "Lista de Regalos para %{event_title} - ¡Registra tu regalo para evitar duplicados!"
+
+  # Invitations
+  invitations:
+    title: "Invitaciones"
+    manage: "Gestionar Invitaciones"
+    new_invitation: "Nueva Invitación"
+    edit_invitation: "Editar Invitación"
+    guest_name: "Nombre del Invitado"
+    email: "Email"
+    phone: "Teléfono"
+    family_group: "Grupo Familiar"
+    status: "Estado"
+    pending: "Pendiente"
+    confirmed: "Confirmado"
+    declined: "Rechazado"
+    send_invitation: "Enviar Invitación"
+    resend: "Reenviar"
+    delete_confirm: "¿Estás seguro de que quieres eliminar esta invitación?"
+
+  # Budget/Presupuestos
+  budget:
+    title: "Presupuesto"
+    manage: "Gestionar Presupuesto"
+    new_item: "Nuevo Item"
+    edit_item: "Editar Item"
+    item_name: "Nombre del Item"
+    category: "Categoría"
+    estimated_cost: "Costo Estimado"
+    actual_cost: "Costo Real"
+    paid: "Pagado"
+    pending: "Pendiente"
+    total_estimated: "Total Estimado"
+    total_actual: "Total Real"
+    remaining_budget: "Presupuesto Restante"
+    delete_confirm: "¿Estás seguro de que quieres eliminar este item del presupuesto?"
+
+  # RSVP
+  rsvp:
+    title: "Confirmar Asistencia"
+    confirm_attendance: "Confirmar Asistencia"
+    will_attend: "Asistiré"
+    wont_attend: "No podré asistir"
+    maybe: "Tal vez"
+    additional_guests: "Invitados adicionales"
+    dietary_requirements: "Restricciones alimentarias"
+    special_requests: "Solicitudes especiales"
+    thank_you: "¡Gracias por confirmar tu asistencia!"
+    response_recorded: "Tu respuesta ha sido registrada"
+    family_confirmation: "Confirmación Familiar"
+    family_confirmation_description: "Confirma la asistencia de tu grupo familiar a %{event_title}. %{description}"
+    group_confirmation_title: "Confirmación Grupal"
+    group_confirmation_description: "Confirma la asistencia de tu grupo familiar: %{group_name}. %{date} %{location}"
+    family_confirmation_alt: "Confirmación familiar para %{event_title} - %{group_name}"
+    confirmations_until: "Confirmaciones hasta:"
+    deadline_closed: "Tiempo límite de confirmación cerrado"
+    deadline_closed_message: "Las confirmaciones cerraron el %{deadline}"
+    group_label: "Grupo:"
+    confirm_all_members: "Confirma la asistencia de todos los miembros de tu tribu"
+    date_and_time: "Fecha y Hora"
+    event_location: "Lugar del encuentro"
+    gift_list: "Lista de Regalos"
+    gift_list_description: "¡Registra tu regalo para evitar duplicados!"
+    view_list: "Ver Lista"
+    view_on_map: "Ver en mapa"
+    tribe_members: "Miembros de la Tribu: %{group_name}"
+    confirm_who_joins: "Confirma quién podrá unirse"
+    status:
+      accepted: "Confirmado"
+      declined: "Declinado"
+      pending: "Pendiente"
+    count_on_me: "Confirmar"
+    cannot_attend: "No podré asistir"
+    confirmations_closed: "Confirmaciones cerradas - Estado:"
+    special_soul_message: "Cada alma es especial como una flor en el jardín de la vida"
+    harmony_message: "Esperamos que toda la tribu %{group_name} pueda unirse a nuestro evento. Que cada confirmación fluya con la armonía del universo."
+    miniplan_footer: "Miniplan • Creando momentos únicos"
+
+  # Family Groups
+  family_groups:
+    title: "Grupos Familiares"
+    new_group: "Nuevo Grupo"
+    edit_group: "Editar Grupo"
+    group_name: "Nombre del Grupo"
+    members: "Miembros"
+    add_member: "Agregar Miembro"
+
+  # Themes
+  themes:
+    title: "Temas del Evento"
+    edit_theme: "Editar Tema"
+    primary_color: "Color Primario"
+    secondary_color: "Color Secundario"
+    background: "Fondo"
+    save_theme: "Guardar Tema"
+
+  # Form validations
+  errors:
+    required_field: "Este campo es requerido"
+    invalid_email: "Email inválido"
+    invalid_format: "Formato inválido"
+
+  # Notifications
+  notifications:
+    created: "%{item} creado exitosamente"
+    updated: "%{item} actualizado exitosamente"
+    deleted: "%{item} eliminado exitosamente"
+    error: "Ocurrió un error. Por favor intenta de nuevo."

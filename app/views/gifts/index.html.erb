@@ -1,4 +1,4 @@
-<% content_for :title, "Lista de Regalos - #{@event.title}" %>
+<% content_for :title, "#{t('gifts.title')} - #{@event.title}" %>
 <%
   # Obtener el tema del evento
   theme = @event.current_theme
@@ -29,13 +29,13 @@
       </div>
       <h1 class="text-4xl sm:text-5xl font-bold mb-3" 
           style="color: <%= theme&.background_text_color %>;">
-        Lista de Regalos <%= gifts_icon %>
+        <%= t('gifts.title') %> <%= gifts_icon %>
       </h1>
       <p class="text-xl mb-2" style="color: <%= theme&.background_text_color %>;">
-        Para: <span class="font-semibold" style="color: <%= theme&.primary_color %>;"><%= @event.title %></span>
+        <%= t('gifts.for_event') %> <span class="font-semibold" style="color: <%= theme&.primary_color %>;"><%= @event.title %></span>
       </p>
       <p class="text-base" style="color: <%= theme&.background_text_color %>;">
-        ¡Evitemos regalos duplicados! Registra aquí lo que vas a regalar ✨
+        <%= t('gifts.avoid_duplicates') %>
       </p>
     </div>
 
@@ -48,7 +48,7 @@
             <span class="text-2xl"><%= gifts_icon %></span>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium" style="color: <%= theme&.background_text_color %>;">Total de Regalos</p>
+            <p class="text-sm font-medium" style="color: <%= theme&.background_text_color %>;"><%= t('gifts.total_gifts') %></p>
             <p class="text-3xl font-bold" style="color: <%= theme&.primary_color %>;"><%= @gifts.count %></p>
           </div>
         </div>
@@ -62,11 +62,11 @@
         class="inline-flex items-center gap-3 px-6 py-3 font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
         style="background: linear-gradient(135deg, <%= theme&.primary_color %> 0%, <%= theme&.secondary_color %> 100%); color: <%= theme&.text_color %>;">
         <span class="text-xl">🔗</span>
-        <span>Compartir Lista Pública</span>
+        <span><%= t('gifts.share_public_list') %></span>
         <span class="text-xl">📱</span>
       </button>
       <p class="text-sm mt-2" style="color: <%= theme&.background_text_color %>;">
-        Comparte este enlace para que los invitados registren sus regalos
+        <%= t('gifts.share_description') %>
       </p>
     </div>
 
@@ -77,8 +77,8 @@
              style="background: <%= theme&.card_background %>; border-color: <%= theme&.primary_color %>;">
           <div class="text-center mb-6">
             <div class="text-3xl mb-2">💝</div>
-            <h2 class="text-2xl font-bold mb-2" style="color: <%= theme&.background_text_color %>;">Registrar Regalo</h2>
-            <p class="text-sm" style="color: <%= theme&.background_text_color %>;">¡Comparte qué vas a regalar para evitar duplicados!</p>
+            <h2 class="text-2xl font-bold mb-2" style="color: <%= theme&.background_text_color %>;"><%= t('gifts.register_gift') %></h2>
+            <p class="text-sm" style="color: <%= theme&.background_text_color %>;"><%= t('gifts.share_what_you_give') %></p>
           </div>
 
           <%= form_with model: [@event, @new_gift], 
@@ -87,9 +87,9 @@
                         data: { controller: "gift-form" } do |form| %>
             
             <div>
-              <%= form.label :name, "Nombre del Regalo", class: "block text-sm font-medium mb-1", style: "color: #{theme&.background_text_color};" %>
+              <%= form.label :name, t('gifts.gift_name'), class: "block text-sm font-medium mb-1", style: "color: #{theme&.background_text_color};" %>
               <%= form.text_field :name, 
-                                  placeholder: "Ej: Set de vajilla, Lámpara de mesa...",
+                                  placeholder: t('gifts.gift_name_placeholder'),
                                   class: "w-full px-4 py-3 border rounded-xl transition-colors",
                                   style: "border-color: #{theme&.secondary_color}; focus:ring-color: #{theme&.primary_color}; focus:border-color: #{theme&.primary_color};",
                                   required: true %>
@@ -98,7 +98,7 @@
               <% end %>
             </div>
 
-            <%= form.submit "#{gifts_icon} Registrar Regalo", 
+            <%= form.submit "#{gifts_icon} #{t('gifts.register_button')}", 
                            class: "w-full font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-xl text-lg border-2",
                            style: "background: linear-gradient(135deg, #{theme&.primary_color} 0%, #{theme&.secondary_color} 100%); color: #{theme&.text_color}; border-color: rgba(255,255,255,0.2);" %>
           <% end %>
@@ -107,9 +107,9 @@
             <div class="flex items-start">
               <span class="text-yellow-600 text-xl mr-2">💡</span>
               <div>
-                <h3 class="text-sm font-medium text-yellow-800">Consejo</h3>
+                <h3 class="text-sm font-medium text-yellow-800"><%= t('common.tip') %></h3>
                 <p class="text-xs text-yellow-700 mt-1">
-                  Una vez registrado, no podrás editar ni eliminar el regalo. ¡Asegúrate de que esté correcto! Si necesitas hacer cambios, contacta al organizador del evento.
+                  <%= t('gifts.cannot_edit_warning') %>
                 </p>
               </div>
             </div>
@@ -123,7 +123,7 @@
              style="background: <%= theme&.card_background %>; border-color: <%= theme&.secondary_color %>;">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-2xl font-bold" style="color: <%= theme&.background_text_color %>;">
-              Regalos Registrados
+              <%= t('gifts.registered_gifts') %>
               <span class="text-lg ml-2" style="color: <%= theme&.primary_color %>;">(<%= @gifts.count %>)</span>
             </h2>
             <div class="text-3xl">🎀</div>
@@ -152,22 +152,22 @@
                         <%= link_to edit_event_gift_path(@event, gift), 
                             class: "px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1",
                             style: "background: rgba(59, 130, 246, 0.1); color: #1d4ed8;",
-                            title: "Editar regalo" do %>
+                            title: t('gifts.edit_gift') do %>
                           <span class="text-sm">✏️</span>
-                          <span class="text-xs font-medium">Editar</span>
+                          <span class="text-xs font-medium"><%= t('common.edit') %></span>
                         <% end %>
                         
                         <%= button_to event_gift_path(@event, gift), 
                             method: :delete,
                             class: "px-3 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1 border-none cursor-pointer text-xs font-medium",
                             style: "background: rgba(239, 68, 68, 0.1); color: #dc2626;",
-                            title: "Eliminar regalo",
+                            title: t('gifts.delete_gift'),
                             data: { 
-                              confirm: "¿Estás seguro de que quieres eliminar este regalo?",
+                              confirm: t('gifts.delete_confirm'),
                               controller: "confirm-delete"
                             } do %>
                           <span class="text-sm">🗑️</span>
-                          <span>Eliminar</span>
+                          <span><%= t('common.delete') %></span>
                         <% end %>
                       </div>
                     </div>
@@ -178,8 +178,8 @@
           <% else %>
             <div class="text-center py-12">
               <div class="text-6xl mb-4"><%= gifts_icon %></div>
-              <h3 class="text-xl font-semibold mb-2" style="color: <%= theme&.background_text_color %>;">¡Aún no hay regalos registrados!</h3>
-              <p style="color: <%= theme&.background_text_color %>;">Sé el primero en registrar un regalo para este evento especial</p>
+              <h3 class="text-xl font-semibold mb-2" style="color: <%= theme&.background_text_color %>;"><%= t('gifts.no_gifts_yet') %></h3>
+              <p style="color: <%= theme&.background_text_color %>;"><%= t('gifts.be_first') %></p>
             </div>
           <% end %>
         </div>
@@ -190,13 +190,16 @@
     <div class="text-center mt-8">
       <%= link_to @event, class: "inline-flex items-center px-6 py-3 font-medium rounded-xl transition-all duration-200 shadow-lg border", style: "background: #{theme&.card_background}; color: #{theme&.background_text_color}; border-color: #{theme&.secondary_color};" do %>
         <span class="mr-2">←</span>
-        Volver al Evento
+        <%= t('navigation.back_to_event') %>
       <% end %>
     </div>
   </div>
 </div>
 
 <script>
+// Translations for JavaScript
+const translations = <%= gifts_js_translations %>;
+
 function shareGiftsList() {
   const publicUrl = '<%= public_gifts_url(@event.hash_id) %>';
   const shareText = '<%= share_gifts_text(@event).html_safe %>';
@@ -204,18 +207,18 @@ function shareGiftsList() {
   // Intentar usar la API de compartir nativa si está disponible
   if (navigator.share) {
     navigator.share({
-      title: 'Lista de Regalos - <%= @event.title %>',
-      text: '<%= gifts_icon %> Lista de Regalos para <%= @event.title %> - ¡Registra tu regalo para evitar duplicados!',
+      title: translations.share_title,
+      text: translations.share_text,
       url: publicUrl
     }).catch(console.error);
   } else {
     // Fallback: copiar al portapapeles
     navigator.clipboard.writeText(shareText).then(function() {
-      showNotification('📋 Enlace copiado al portapapeles', 'success');
+      showNotification(translations.link_copied, 'success');
     }).catch(function(err) {
       // Fallback para navegadores más antiguos
       fallbackCopyToClipboard(shareText);
-      showNotification('📋 Enlace copiado al portapapeles', 'success');
+      showNotification(translations.link_copied, 'success');
     });
   }
 }
