@@ -186,7 +186,7 @@
         <div class="space-y-4">
           <% @invitations.each_with_index do |invitation, index| %>
             <div class="member-card" data-family-rsvp-target="memberCard" data-member-id="<%= invitation.id %>">
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between lg:flex-row flex-col">
                 <div class="flex items-center flex-1 min-w-0">
                   <div class="flex-shrink-0 mr-3">
                     <% if invitation.status == 'accepted' %>
