@@ -69,4 +69,4 @@ end
 
 gem "annotaterb", "~> 4.18"
 
-gem "view_component", "~> 4.0"
+gem "view_component", "~> 4.1"
