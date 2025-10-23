@@ -137,7 +137,7 @@
   background: var(--peaceful-white);
   border: 2px solid #e6c994;
   border-radius: 15px;
-  padding: 0.75rem;
+  padding: 0.15rem;
   margin-bottom: 1rem;
   transition: all 0.3s ease;
   display: flex;

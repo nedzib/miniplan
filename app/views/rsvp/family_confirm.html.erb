@@ -186,7 +186,7 @@
         <div class="space-y-4">
           <% @invitations.each_with_index do |invitation, index| %>
             <div class="member-card" data-family-rsvp-target="memberCard" data-member-id="<%= invitation.id %>">
-              <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center justify-between">
                 <div class="flex items-center flex-1 min-w-0">
                   <div class="flex-shrink-0 mr-3">
                     <% if invitation.status == 'accepted' %>
@@ -197,8 +197,8 @@
                       <span class="text-xl"><%= theme.status_pending_emoji %></span>
                     <% end %>
                   </div>
-                  <div class="flex-1 min-w-0">
-                    <h4 class="font-semibold text-sm mb-1 truncate" style="color: <%= theme.background_text_color %>;"><%= invitation.name %></h4>
+                  <div class="flex flex-row min-w-0">
+                    <h4 class="font-semibold text-sm mb-1 truncate mr-2" style="color: <%= theme.background_text_color %>;"><%= invitation.name %></h4>
                     <div class="status-badge status-<%= invitation.status %>" style="font-size: 0.75rem; padding: 0.125rem 0.5rem;">
                       <%= invitation.status == 'accepted' ? "#{theme.accept_emoji} #{t('rsvp.status.accepted')}" : (invitation.status == 'declined' ? "#{theme.decline_emoji} #{t('rsvp.status.declined')}" : "#{theme.status_pending_emoji} #{t('rsvp.status.pending')}") %>
                     </div>
@@ -210,8 +210,8 @@
                     <button 
                       type="button"
                       onclick="updateMemberStatus(<%= invitation.id %>, 'accepted')"
-                      class="flex items-center justify-between w-full py-2 px-4 rounded-lg font-medium text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
-                      style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); color: <%= theme.text_color %>; min-height: 2.5rem;"
+                      class="flex items-center justify-between w-full px-2 rounded-lg font-medium text-sm transition-all duration-200 shadow-lg hover:shadow-xl"
+                      style="background: linear-gradient(135deg, <%= theme.primary_color %> 0%, <%= theme.secondary_color %> 100%); color: <%= theme.text_color %>;"
                       data-family-rsvp-target="acceptButton"
                       data-member-id="<%= invitation.id %>">
                       <span class="text-lg"><%= theme.accept_emoji %></span>
@@ -222,8 +222,8 @@
                     <button 
                       type="button"
                       onclick="updateMemberStatus(<%= invitation.id %>, 'declined')"
-                      class="flex items-center justify-between w-full py-2 px-4 rounded-lg font-medium text-sm transition-all duration-200 shadow-lg hover:shadow-xl border-2"
-                      style="border-color: <%= theme.primary_color %>; background: rgba(255,255,255,0.9); color: <%= theme.background_text_color %>; min-height: 2.5rem;"
+                      class="flex items-center justify-between w-full px-2 rounded-lg font-medium text-sm transition-all duration-200 shadow-lg hover:shadow-xl border-2"
+                      style="border-color: <%= theme.primary_color %>; background: rgba(255,255,255,0.9); color: <%= theme.background_text_color %>;"
                       data-family-rsvp-target="declineButton"
                       data-member-id="<%= invitation.id %>">
                       <span class="text-sm"><%= theme.decline_emoji %></span>
@@ -233,7 +233,7 @@
                   </div>
                 <% else %>
                   <div class="flex-shrink-0">
-                    <div class="text-center py-2 px-3 rounded-lg" style="background-color: #f5f5f5; border: 1px solid #ddd; font-size: 0.75rem;">
+                    <div class="text-center px-2 rounded-lg" style="background-color: #f5f5f5; border: 1px solid #ddd; font-size: 0.75rem;">
                       <p class="text-xs" style="color: #666;">
                         <%= t('rsvp.confirmations_closed') %> 
                         <span class="font-bold">
